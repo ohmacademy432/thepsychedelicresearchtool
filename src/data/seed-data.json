@@ -1,0 +1,1268 @@
+{
+  "_meta": {
+    "title": "OHM Academy Screening Tool — Seed Data",
+    "version": "0.1.0",
+    "purpose": "Internal facilitator reference for medication / supplement / street-drug compatibility with plant medicines",
+    "disclaimer": "Harm-reduction reference only. Not medical advice. Every flagged interaction requires licensed clinician sign-off before ceremony.",
+    "sources": [
+      "OHM Academy Pre-Ceremony Preparation Protocols (5-MeO-DMT, Psilocybin)",
+      "OHM Academy Psychedelic Pre-Screening Questionnaire",
+      "OHM / Iboga Screening & Monitoring Brief",
+      "Global Ibogaine Therapy Alliance (GITA) Clinical Guidelines",
+      "Deeply Rooted Coaching — Bufo (5-MeO-DMT) Preparation & Integration Guide",
+      "Your Guide to a Safe 5-MeO-DMT Journey (Conclave / EntheoNation / Tandava)",
+      "MAPS Psychedelic Integration Workbook",
+      "Introduction to Iboga and Ibogaine — Taiboga Practitioner Notes"
+    ]
+  },
+
+  "medicines": [
+    {
+      "id": "iboga",
+      "name": "Iboga / Ibogaine",
+      "displayName": "Iboga / Ibogaine",
+      "primaryRiskProfile": "cardiac",
+      "halfLife": "Ibogaine ~7 hours; noribogaine stored in fat, weeks-long activity",
+      "metabolism": "CYP2D6 — poor and ultra-rapid metabolizers at higher risk",
+      "highlightWarnings": [
+        "QT prolongation and torsades de pointes risk",
+        "Bradycardia, hypotension, t-wave morphology changes (12–24h)",
+        "Adverse events reported as late as 76 hours post-dose",
+        "Lowers seizure threshold during alcohol/benzodiazepine withdrawal"
+      ]
+    },
+    {
+      "id": "psilocybin",
+      "name": "Psilocybin",
+      "displayName": "Psilocybin (mushrooms)",
+      "primaryRiskProfile": "psychiatric",
+      "halfLife": "Psilocin ~3 hours; experience 4–6 hours",
+      "metabolism": "Dephosphorylated to psilocin; MAO-mediated breakdown",
+      "highlightWarnings": [
+        "Lithium combination has caused seizures",
+        "Active psychosis or schizophrenia is an absolute contraindication",
+        "Modest BP and HR elevation"
+      ]
+    },
+    {
+      "id": "lsd",
+      "name": "LSD",
+      "displayName": "LSD",
+      "primaryRiskProfile": "psychiatric",
+      "halfLife": "~5 hours; experience 8–12 hours",
+      "metabolism": "Hepatic; multiple CYPs",
+      "highlightWarnings": [
+        "Lithium combination has caused seizures",
+        "Long duration amplifies psychiatric risk in vulnerable individuals",
+        "HPPD risk in predisposed individuals"
+      ]
+    },
+    {
+      "id": "mdma",
+      "name": "MDMA",
+      "displayName": "MDMA",
+      "primaryRiskProfile": "cardiac_serotonergic",
+      "halfLife": "~8 hours; experience 4–6 hours",
+      "metabolism": "CYP2D6 (also CYP3A4) — poor metabolizers at higher risk",
+      "highlightWarnings": [
+        "Most cardiotoxic of common psychedelics",
+        "Serotonin syndrome risk with serotonergic drugs",
+        "Hyperthermia risk in warm environments / overexertion",
+        "Hyponatremia risk from over-hydration"
+      ]
+    },
+    {
+      "id": "5meodmt",
+      "name": "5-MeO-DMT",
+      "displayName": "5-MeO-DMT (Bufo)",
+      "primaryRiskProfile": "cardiac_serotonergic",
+      "halfLife": "Very short; experience 15–45 minutes",
+      "metabolism": "MAO-A primarily; potentiated dramatically by MAOIs",
+      "highlightWarnings": [
+        "Complete ego dissolution — psychological intensity is extreme",
+        "Cardiac and respiratory effects rapid in onset",
+        "MAOI combination is dangerous and prolongs experience",
+        "Lithium contraindicated"
+      ]
+    },
+    {
+      "id": "nndmt",
+      "name": "N,N-DMT",
+      "displayName": "N,N-DMT (smoked / vaped)",
+      "primaryRiskProfile": "psychiatric",
+      "halfLife": "Very short; experience 5–20 minutes",
+      "metabolism": "MAO-A primarily",
+      "highlightWarnings": [
+        "Without MAOI: short, intense, generally cardiovascular-mild",
+        "BP and HR elevation can be sharp",
+        "Smoked route — respiratory irritation"
+      ]
+    },
+    {
+      "id": "ayahuasca",
+      "name": "Ayahuasca",
+      "displayName": "Ayahuasca",
+      "primaryRiskProfile": "MAOI_serotonergic",
+      "halfLife": "Experience 4–6 hours; MAOI activity persists 24h+",
+      "metabolism": "Contains harmala alkaloids — reversible MAO-A inhibitors",
+      "highlightWarnings": [
+        "Functions as an MAOI — tyramine-rich foods can trigger hypertensive crisis",
+        "SSRI combination risks serotonin syndrome",
+        "Tramadol, dextromethorphan, meperidine: can be fatal",
+        "Many medications metabolized by MAO-A become dangerous"
+      ]
+    },
+    {
+      "id": "kambo",
+      "name": "Kambo",
+      "displayName": "Kambo (frog peptide)",
+      "primaryRiskProfile": "cardiac_renal",
+      "halfLife": "Acute effects 20–40 minutes; recovery 1–2 hours",
+      "metabolism": "Peptide-based; renal clearance important",
+      "highlightWarnings": [
+        "NOT a psychedelic — peptide medicine with intense purgative effects",
+        "Severe hyponatremia risk from forced water intake (deaths reported)",
+        "Cardiac contraindications: heart conditions, recent surgery, low BP",
+        "Pregnancy is an absolute contraindication"
+      ]
+    }
+  ],
+
+  "categories": [
+    {
+      "id": "ssri",
+      "name": "SSRI Antidepressants",
+      "description": "Selective Serotonin Reuptake Inhibitors",
+      "examples": ["Prozac (fluoxetine)", "Zoloft (sertraline)", "Lexapro (escitalopram)", "Celexa (citalopram)", "Paxil (paroxetine)", "Luvox (fluvoxamine)"]
+    },
+    {
+      "id": "snri",
+      "name": "SNRI Antidepressants",
+      "description": "Serotonin-Norepinephrine Reuptake Inhibitors",
+      "examples": ["Effexor (venlafaxine)", "Cymbalta (duloxetine)", "Pristiq (desvenlafaxine)"]
+    },
+    {
+      "id": "maoi_rx",
+      "name": "MAOI Antidepressants (prescription)",
+      "description": "Monoamine Oxidase Inhibitors",
+      "examples": ["Nardil (phenelzine)", "Parnate (tranylcypromine)", "Marplan (isocarboxazid)", "Emsam (selegiline)"]
+    },
+    {
+      "id": "tca",
+      "name": "Tricyclic Antidepressants",
+      "description": "Older-generation antidepressants with anticholinergic and serotonergic activity",
+      "examples": ["Elavil (amitriptyline)", "Tofranil (imipramine)", "Pamelor (nortriptyline)", "Anafranil (clomipramine)"]
+    },
+    {
+      "id": "lithium",
+      "name": "Lithium",
+      "description": "Mood stabilizer",
+      "examples": ["Lithium carbonate", "Lithobid", "Eskalith"]
+    },
+    {
+      "id": "mood_stabilizer",
+      "name": "Mood Stabilizers (non-lithium)",
+      "description": "Anticonvulsants used as mood stabilizers",
+      "examples": ["Lamictal (lamotrigine)", "Depakote (valproate)", "Tegretol (carbamazepine)", "Trileptal (oxcarbazepine)"]
+    },
+    {
+      "id": "antipsychotic",
+      "name": "Antipsychotics",
+      "description": "Dopamine-blocking agents (typical and atypical)",
+      "examples": ["Risperdal (risperidone)", "Seroquel (quetiapine)", "Abilify (aripiprazole)", "Zyprexa (olanzapine)", "Haldol (haloperidol)", "Latuda (lurasidone)"]
+    },
+    {
+      "id": "stimulant_rx",
+      "name": "Stimulant Medications",
+      "description": "Prescription stimulants for ADHD",
+      "examples": ["Adderall", "Ritalin (methylphenidate)", "Vyvanse (lisdexamfetamine)", "Concerta", "Dexedrine"]
+    },
+    {
+      "id": "benzodiazepine",
+      "name": "Benzodiazepines",
+      "description": "GABAergic anxiolytics and sedatives",
+      "examples": ["Xanax (alprazolam)", "Klonopin (clonazepam)", "Ativan (lorazepam)", "Valium (diazepam)", "Restoril (temazepam)"]
+    },
+    {
+      "id": "opioid_general",
+      "name": "Opioids (general)",
+      "description": "Prescription opioid analgesics",
+      "examples": ["Oxycodone", "Hydrocodone", "Morphine", "Codeine", "Fentanyl", "Tramadol (see separate)"]
+    },
+    {
+      "id": "methadone",
+      "name": "Methadone",
+      "description": "Long-acting opioid — special considerations for iboga",
+      "examples": ["Methadone", "Dolophine"]
+    },
+    {
+      "id": "tramadol",
+      "name": "Tramadol",
+      "description": "Opioid + SNRI activity — multiple serious interactions",
+      "examples": ["Tramadol", "Ultram", "ConZip"]
+    },
+    {
+      "id": "dxm",
+      "name": "Dextromethorphan (DXM)",
+      "description": "Cough suppressant with serotonergic and NMDA activity",
+      "examples": ["Robitussin DM", "Delsym", "NyQuil (cough varieties)", "Mucinex DM"]
+    },
+    {
+      "id": "fluoroquinolone",
+      "name": "Fluoroquinolone Antibiotics",
+      "description": "QT-prolonging antibiotics",
+      "examples": ["Cipro (ciprofloxacin)", "Levaquin (levofloxacin)", "Avelox (moxifloxacin)"]
+    },
+    {
+      "id": "macrolide",
+      "name": "Macrolide Antibiotics",
+      "description": "QT-prolonging antibiotics",
+      "examples": ["Z-Pak (azithromycin)", "Erythromycin", "Biaxin (clarithromycin)"]
+    },
+    {
+      "id": "ondansetron",
+      "name": "Ondansetron (Zofran)",
+      "description": "Antiemetic — QT prolonging at higher doses",
+      "examples": ["Zofran"]
+    },
+    {
+      "id": "beta_blocker",
+      "name": "Beta Blockers",
+      "description": "Cardiovascular medications",
+      "examples": ["Metoprolol", "Propranolol", "Atenolol", "Carvedilol"]
+    },
+    {
+      "id": "antihypertensive",
+      "name": "Other Antihypertensives",
+      "description": "ACE inhibitors, ARBs, calcium channel blockers, diuretics",
+      "examples": ["Lisinopril", "Losartan", "Amlodipine", "Hydrochlorothiazide"]
+    },
+    {
+      "id": "st_johns_wort",
+      "name": "St. John's Wort",
+      "description": "Herbal serotonergic + CYP inducer",
+      "examples": ["St. John's Wort", "Hypericum perforatum"]
+    },
+    {
+      "id": "5htp_tryptophan",
+      "name": "5-HTP / L-Tryptophan",
+      "description": "Serotonin precursors",
+      "examples": ["5-HTP", "L-Tryptophan"]
+    },
+    {
+      "id": "magnesium",
+      "name": "Magnesium",
+      "description": "Mineral supplement — supports cardiac and nervous system function",
+      "examples": ["Magnesium glycinate", "Magnesium threonate", "Magnesium citrate"]
+    },
+    {
+      "id": "kratom",
+      "name": "Kratom",
+      "description": "Opioid-receptor active herb",
+      "examples": ["Kratom (Mitragyna speciosa)"]
+    },
+    {
+      "id": "grapefruit",
+      "name": "Grapefruit / CYP3A4 Inhibitors",
+      "description": "Strong CYP3A4 inhibitors that affect drug metabolism",
+      "examples": ["Grapefruit juice", "Bergamot"]
+    },
+    {
+      "id": "alcohol",
+      "name": "Alcohol",
+      "description": "Recreational/dietary",
+      "examples": ["Beer", "Wine", "Spirits"]
+    },
+    {
+      "id": "cannabis",
+      "name": "Cannabis / THC",
+      "description": "Recreational/medicinal",
+      "examples": ["Cannabis flower", "Edibles", "Vape concentrates", "THC tinctures"]
+    },
+    {
+      "id": "cbd",
+      "name": "CBD",
+      "description": "Non-psychoactive cannabinoid",
+      "examples": ["CBD oil", "CBD gummies", "Full-spectrum hemp"]
+    },
+    {
+      "id": "cocaine",
+      "name": "Cocaine",
+      "description": "Recreational stimulant",
+      "examples": ["Cocaine", "Crack"]
+    },
+    {
+      "id": "meth",
+      "name": "Methamphetamine",
+      "description": "Recreational stimulant",
+      "examples": ["Methamphetamine", "Crystal meth"]
+    },
+    {
+      "id": "mdma_recreational",
+      "name": "MDMA (recreational use prior to ceremony)",
+      "description": "Recent MDMA depletes serotonin",
+      "examples": ["MDMA", "Ecstasy", "Molly"]
+    },
+    {
+      "id": "ketamine_recreational",
+      "name": "Ketamine (recreational)",
+      "description": "Dissociative",
+      "examples": ["Ketamine", "Special K"]
+    },
+    {
+      "id": "nicotine",
+      "name": "Nicotine / Tobacco",
+      "description": "Stimulant — minimize day-of",
+      "examples": ["Cigarettes", "Vape", "Chewing tobacco", "Nicotine pouches"]
+    },
+    {
+      "id": "caffeine",
+      "name": "Caffeine",
+      "description": "Stimulant",
+      "examples": ["Coffee", "Tea", "Energy drinks", "Pre-workout"]
+    }
+  ],
+
+  "interactions": [
+    {
+      "categoryId": "ssri",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "2–6 weeks (fluoxetine: 4–6 weeks due to long half-life)",
+      "restart": "After QT and t-wave normalize on post-ceremony ECG (typically 24–72h+); coordinate with prescriber",
+      "notes": "Both ibogaine and SSRIs prolong QT — combination risks torsades de pointes. SSRIs also blunt iboga's effect. Per GITA Clinical Guidelines, must wash out fully before flood dose. Coordinate taper with prescriber — abrupt SSRI discontinuation has its own risks.",
+      "source": "Iboga Screening & Monitoring Brief; GITA Clinical Guidelines"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "2 weeks recommended (fluoxetine: 4–6 weeks)",
+      "restart": "24–48h post-ceremony if needed, coordinate with prescriber",
+      "notes": "Chronic SSRI use significantly blunts psilocybin's subjective and therapeutic effects. Acute combination risk is low (serotonin syndrome rare) but the experience is often unproductive. Most clinical protocols (e.g., Compass, Usona) require taper. Discuss tradeoffs with participant and prescriber.",
+      "source": "OHM Psilocybin Prep Protocol; clinical research consensus"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "lsd",
+      "risk": "review",
+      "washout": "2 weeks recommended (fluoxetine: 4–6 weeks)",
+      "restart": "24–48h post-ceremony if needed, coordinate with prescriber",
+      "notes": "Same logic as psilocybin — chronic SSRI use blunts LSD effects. Acute serotonin syndrome risk is low but not zero.",
+      "source": "Tripsit harm reduction; clinical research consensus"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (fluoxetine: 4–6 weeks). DO NOT proceed without full washout.",
+      "restart": "Minimum 24h post-ceremony, coordinate with prescriber",
+      "notes": "DOUBLE PROBLEM: SSRIs block MDMA's mechanism (blunts effect, encourages re-dosing) AND combination raises serotonin syndrome risk. Hyperthermia risk amplified.",
+      "source": "MAPS protocols; Tripsit; clinical consensus"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "5meodmt",
+      "risk": "high_caution",
+      "washout": "2–4 weeks (fluoxetine: 4–6 weeks)",
+      "restart": "Coordinate with prescriber",
+      "notes": "Per OHM 5-MeO-DMT Prep Protocol: SSRIs may require higher doses of 5-MeO-DMT (blunting effect) AND combination raises serotonin syndrome risk. Full medication disclosure mandatory.",
+      "source": "OHM 5-MeO-DMT Prep Protocol; Conclave Best Practices"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "nndmt",
+      "risk": "review",
+      "washout": "2 weeks (fluoxetine: 4–6 weeks)",
+      "restart": "Coordinate with prescriber",
+      "notes": "Without MAOI: similar to psilocybin/LSD — blunted effect, low acute risk. With ayahuasca: see ayahuasca row.",
+      "source": "Tripsit; clinical research consensus"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (fluoxetine: 4–6 weeks). NO SHORTCUTS.",
+      "restart": "Coordinate with prescriber, minimum 24h post-ceremony",
+      "notes": "Serotonin syndrome risk is real and has caused deaths. The MAOI activity of harmala alkaloids combined with SSRI is the classic dangerous combination. Full disclosure and washout mandatory.",
+      "source": "Standard ayahuasca facilitator protocols; published case reports"
+    },
+    {
+      "categoryId": "ssri",
+      "medicineId": "kambo",
+      "risk": "review",
+      "washout": "Generally not required for the peptides themselves",
+      "restart": "Continue as prescribed",
+      "notes": "Kambo peptides do not directly interact with serotonergic medications, but underlying psychiatric stability matters. Review with prescribing clinician.",
+      "source": "IAKP guidelines"
+    },
+
+    {
+      "categoryId": "snri",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "2–6 weeks",
+      "restart": "After QT/t-wave normalize, coordinate with prescriber",
+      "notes": "Same QT and serotonergic concerns as SSRIs. Venlafaxine in particular has its own QT signal.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "snri",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Same as SSRI. Norepinephrine component adds cardiovascular load.",
+      "source": "MAPS protocols"
+    },
+    {
+      "categoryId": "snri",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Same serotonin syndrome logic as SSRI + ayahuasca.",
+      "source": "Standard ayahuasca protocols"
+    },
+
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; 5 weeks for selegiline patch",
+      "restart": "Coordinate with prescriber",
+      "notes": "MAOIs are contraindicated with ibogaine.",
+      "source": "GITA Clinical Guidelines"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "psilocybin",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (4 weeks for selegiline patch)",
+      "restart": "Coordinate with prescriber",
+      "notes": "Hypertensive crisis and serotonin syndrome risk. Psilocybin's MAO-mediated breakdown also blocked — unpredictable potentiation.",
+      "source": "Standard psychedelic harm reduction"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "lsd",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Hypertensive crisis risk.",
+      "source": "Tripsit; standard harm reduction"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (4–5 for selegiline)",
+      "restart": "Coordinate with prescriber",
+      "notes": "Has caused deaths. Hyperthermia + serotonin syndrome + hypertensive crisis. NEVER combine.",
+      "source": "MAPS; published fatalities"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "5meodmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (4–5 for selegiline)",
+      "restart": "Coordinate with prescriber",
+      "notes": "Per OHM 5-MeO Prep Protocol: dramatically prolongs and intensifies effects, risk of serotonin syndrome.",
+      "source": "OHM 5-MeO-DMT Prep Protocol"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "nndmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Combining external DMT with prescription MAOI is essentially a non-traditional ayahuasca with additional pharmaceutical burden.",
+      "source": "Standard harm reduction"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Compounding MAO inhibition. Hypertensive crisis risk. Tyramine reaction risk extreme.",
+      "source": "Standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "maoi_rx",
+      "medicineId": "kambo",
+      "risk": "review",
+      "washout": "Discuss with prescriber",
+      "restart": "Continue per prescriber",
+      "notes": "No direct kambo-MAOI interaction known, but underlying psychiatric and cardiovascular status matters.",
+      "source": "IAKP guidelines"
+    },
+
+    {
+      "categoryId": "lithium",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; coordinate carefully with psychiatrist",
+      "restart": "After full medical clearance",
+      "notes": "Lithium adds seizure risk and complicates cardiac picture.",
+      "source": "GITA Clinical Guidelines; OHM Pre-Screening Questionnaire"
+    },
+    {
+      "categoryId": "lithium",
+      "medicineId": "psilocybin",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; coordinate with psychiatrist",
+      "restart": "After full medical clearance",
+      "notes": "Lithium + classic psychedelic combination has well-documented seizure case reports. ABSOLUTE CONTRAINDICATION per OHM Pre-Screening Questionnaire.",
+      "source": "OHM Pre-Screening Questionnaire; published case reports"
+    },
+    {
+      "categoryId": "lithium",
+      "medicineId": "lsd",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "After full medical clearance",
+      "notes": "Same as psilocybin — documented seizures. ABSOLUTE CONTRAINDICATION.",
+      "source": "OHM Pre-Screening Questionnaire; published case reports"
+    },
+    {
+      "categoryId": "lithium",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "After full medical clearance",
+      "notes": "Seizure risk and unpredictable interaction.",
+      "source": "MAPS; harm reduction consensus"
+    },
+    {
+      "categoryId": "lithium",
+      "medicineId": "5meodmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "After full medical clearance",
+      "notes": "Seizure risk in combination with serotonergic psychedelic.",
+      "source": "OHM 5-MeO Prep Protocol; harm reduction consensus"
+    },
+    {
+      "categoryId": "lithium",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "After full medical clearance",
+      "notes": "Seizure risk and serotonergic interaction.",
+      "source": "Standard ayahuasca protocols"
+    },
+
+    {
+      "categoryId": "antipsychotic",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (longer for aripiprazole/Abilify due to long half-life)",
+      "restart": "Coordinate with psychiatrist",
+      "notes": "Many antipsychotics prolong QT — additive cardiac risk. Underlying psychiatric condition often itself contraindicated.",
+      "source": "GITA Clinical Guidelines; OHM Pre-Screening Questionnaire"
+    },
+    {
+      "categoryId": "antipsychotic",
+      "medicineId": "psilocybin",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (longer for aripiprazole)",
+      "restart": "Coordinate with psychiatrist",
+      "notes": "Antipsychotics block 5-HT2A receptors — psilocybin's primary site. Effect is largely blocked, AND the underlying condition is typically a contraindication.",
+      "source": "OHM Pre-Screening Questionnaire"
+    },
+    {
+      "categoryId": "antipsychotic",
+      "medicineId": "lsd",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks (longer for aripiprazole)",
+      "restart": "Coordinate with psychiatrist",
+      "notes": "Same as psilocybin.",
+      "source": "OHM Pre-Screening Questionnaire"
+    },
+    {
+      "categoryId": "antipsychotic",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with psychiatrist",
+      "notes": "Blocks MDMA effects and underlying condition typically a contraindication.",
+      "source": "MAPS protocols"
+    },
+
+    {
+      "categoryId": "stimulant_rx",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week, longer for some agents",
+      "restart": "After full cardiac recovery",
+      "notes": "Compounded cardiovascular load. Per Iboga Brief: stimulants/cocaine carry potentiation risk.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "stimulant_rx",
+      "medicineId": "mdma",
+      "risk": "high_caution",
+      "washout": "Minimum 1 week recommended",
+      "restart": "Discuss with prescriber, minimum 1 week",
+      "notes": "Compounded cardiovascular and hyperthermic load. Increased neurotoxicity risk.",
+      "source": "MAPS; harm reduction consensus"
+    },
+    {
+      "categoryId": "stimulant_rx",
+      "medicineId": "psilocybin",
+      "risk": "high_caution",
+      "washout": "Hold day-of and 24h prior minimum; 1 week ideal",
+      "restart": "24–48h post if no cardiovascular concerns",
+      "notes": "Increases anxiety potential and cardiovascular load. Many participants tolerate but the experience is generally cleaner without.",
+      "source": "OHM Psilocybin Prep Protocol; harm reduction consensus"
+    },
+
+    {
+      "categoryId": "benzodiazepine",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "MEDICAL TAPER REQUIRED before iboga — never abrupt discontinuation",
+      "restart": "Per medical guidance",
+      "notes": "Per GITA: benzo dependence requires medical taper/stabilization before iboga/ibogaine. Withdrawal during ceremony lowers seizure threshold and can be lethal in combination with iboga.",
+      "source": "Iboga Screening & Monitoring Brief; GITA Guidelines"
+    },
+    {
+      "categoryId": "benzodiazepine",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Hold day-of (12–24h prior); discuss chronic use",
+      "restart": "After ceremony if needed",
+      "notes": "Acute benzo strongly blunts/blocks psilocybin effect. Chronic use isn't dangerous but may reduce therapeutic value. Some facilitators keep emergency benzos available for severe acute distress.",
+      "source": "Clinical research protocols"
+    },
+    {
+      "categoryId": "benzodiazepine",
+      "medicineId": "ayahuasca",
+      "risk": "review",
+      "washout": "Hold 24h prior minimum",
+      "restart": "After ceremony",
+      "notes": "Blunts experience. Chronic dependence may complicate the work.",
+      "source": "Standard ayahuasca facilitator protocols"
+    },
+
+    {
+      "categoryId": "opioid_general",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Transition long-acting opioids to short-acting 24–72h before; specific protocols required",
+      "restart": "TOLERANCE IS RESET — relapse-dose risk of fatal overdose is extreme",
+      "notes": "Iboga is used clinically TO INTERRUPT opioid dependence. This is one of the highest-risk transitions in medicine. Requires medical supervision. Iboga potentiates opioid effects acutely; afterward, opioid sensitivity returns to opioid-naive levels — same dose that was tolerated before iboga can kill after.",
+      "source": "GITA Clinical Guidelines; Taiboga Practitioner Notes"
+    },
+    {
+      "categoryId": "opioid_general",
+      "medicineId": "ayahuasca",
+      "risk": "high_caution",
+      "washout": "24–72h depending on agent; tramadol and meperidine never combine",
+      "restart": "After ceremony",
+      "notes": "Most opioids interact with MAOIs. Tramadol and meperidine have caused deaths.",
+      "source": "Standard ayahuasca protocols"
+    },
+
+    {
+      "categoryId": "methadone",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Transition to short-acting opioid 24–72h pre-dose. NEVER take iboga while still on methadone.",
+      "restart": "Goal of treatment is often to NOT restart — but tolerance is reset, so any restart requires careful reduced dosing.",
+      "notes": "Methadone has its own QT-prolonging signal — additive risk with iboga. Long half-life (~24-36h) means timing of transition is critical. This is specialist work.",
+      "source": "Iboga Screening & Monitoring Brief; GITA Clinical Guidelines"
+    },
+
+    {
+      "categoryId": "tramadol",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid permanently if possible — multiple risks compound",
+      "notes": "Tramadol has SNRI activity (serotonergic) AND opioid activity AND lowers seizure threshold. Triple problem with iboga.",
+      "source": "Pharmacology principles; harm reduction consensus"
+    },
+    {
+      "categoryId": "tramadol",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Serotonin syndrome risk compounded.",
+      "source": "Tripsit; harm reduction consensus"
+    },
+    {
+      "categoryId": "tramadol",
+      "medicineId": "5meodmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Serotonin syndrome and seizure risk.",
+      "source": "Tripsit; pharmacology principles"
+    },
+    {
+      "categoryId": "tramadol",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "MAOI + tramadol can be fatal. One of the most dangerous combinations in psychedelic harm reduction.",
+      "source": "Published case reports; standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "tramadol",
+      "medicineId": "psilocybin",
+      "risk": "high_caution",
+      "washout": "Minimum 1 week",
+      "restart": "Discuss with prescriber",
+      "notes": "Seizure threshold lowering + serotonergic activity.",
+      "source": "Tripsit"
+    },
+    {
+      "categoryId": "tramadol",
+      "medicineId": "lsd",
+      "risk": "high_caution",
+      "washout": "Minimum 1 week",
+      "restart": "Discuss with prescriber",
+      "notes": "Seizure threshold lowering + serotonergic activity.",
+      "source": "Tripsit"
+    },
+
+    {
+      "categoryId": "dxm",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid during integration",
+      "notes": "Serotonin syndrome risk. Check ALL cough/cold medicines.",
+      "source": "Tripsit; standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "dxm",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Serotonin syndrome risk.",
+      "source": "Tripsit"
+    },
+    {
+      "categoryId": "dxm",
+      "medicineId": "5meodmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Serotonin syndrome risk.",
+      "source": "Tripsit"
+    },
+    {
+      "categoryId": "dxm",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Serotonergic + cardiac concerns.",
+      "source": "Pharmacology principles"
+    },
+
+    {
+      "categoryId": "fluoroquinolone",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Complete course + minimum 2 weeks",
+      "restart": "After QTc normalizes",
+      "notes": "Per Iboga Brief: QT-prolonging agents must wash out. Fluoroquinolones (Cipro, Levaquin, etc.) prolong QT independently — additive risk dangerous.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "macrolide",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Complete course + minimum 2 weeks",
+      "restart": "After QTc normalizes",
+      "notes": "Z-pak and other macrolides prolong QT.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "ondansetron",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Avoid in pre-ceremony period; if antiemetic needed, prefer metoclopramide or promethazine",
+      "restart": "Use alternative antiemetics",
+      "notes": "Per Iboga Brief: high-dose ondansetron prolongs QT.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+
+    {
+      "categoryId": "st_johns_wort",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Discuss with practitioner",
+      "notes": "Per Iboga Brief: CYP interactions affect ibogaine metabolism. Also serotonergic activity.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "st_johns_wort",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Discuss with practitioner",
+      "notes": "Serotonergic activity + MAOI = serotonin syndrome risk.",
+      "source": "Standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "st_johns_wort",
+      "medicineId": "mdma",
+      "risk": "high_caution",
+      "washout": "Minimum 2 weeks",
+      "restart": "Discuss",
+      "notes": "Serotonin syndrome risk.",
+      "source": "Tripsit"
+    },
+    {
+      "categoryId": "st_johns_wort",
+      "medicineId": "5meodmt",
+      "risk": "high_caution",
+      "washout": "Minimum 2 weeks",
+      "restart": "Discuss",
+      "notes": "Serotonin syndrome risk.",
+      "source": "Tripsit"
+    },
+
+    {
+      "categoryId": "5htp_tryptophan",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 24–48h before; avoid during integration",
+      "restart": "Can be helpful AFTER MDMA for serotonin replenishment, but not with ayahuasca",
+      "notes": "Direct serotonin precursor + MAOI = serotonin syndrome risk.",
+      "source": "Tripsit; standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "5htp_tryptophan",
+      "medicineId": "mdma",
+      "risk": "high_caution",
+      "washout": "Stop 24–48h before",
+      "restart": "Often helpful 1–3 days post-MDMA for serotonin restoration (not within 24h)",
+      "notes": "Pre-MDMA: serotonin syndrome risk. Post-MDMA: commonly used in harm-reduction protocols for restoration, but timing matters.",
+      "source": "Tripsit; harm reduction consensus"
+    },
+    {
+      "categoryId": "5htp_tryptophan",
+      "medicineId": "5meodmt",
+      "risk": "high_caution",
+      "washout": "Stop 24–48h before",
+      "restart": "Discuss with facilitator",
+      "notes": "Serotonin loading risk.",
+      "source": "Harm reduction consensus"
+    },
+
+    {
+      "categoryId": "magnesium",
+      "medicineId": "iboga",
+      "risk": "generally_ok",
+      "washout": "None — actively protective",
+      "restart": "Continue / maintain",
+      "notes": "Per Iboga Brief: target Mg²⁺ ≥2.0 pre-dose. Magnesium is repleted IV before iboga in clinical settings. Oral supplementation pre-ceremony is supportive.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "magnesium",
+      "medicineId": "5meodmt",
+      "risk": "generally_ok",
+      "washout": "None — supportive",
+      "restart": "Continue",
+      "notes": "Per OHM 5-MeO Prep Protocol: magnesium glycinate or threonate 200–400 mg daily recommended in prep week; 300–600 mg split doses days 2–1 prior.",
+      "source": "OHM 5-MeO-DMT Prep Protocol"
+    },
+    {
+      "categoryId": "magnesium",
+      "medicineId": "psilocybin",
+      "risk": "generally_ok",
+      "washout": "None — supportive",
+      "restart": "Continue",
+      "notes": "Per OHM Psilocybin Prep Protocol: 200–400 mg daily in prep week; supports nervous system regulation.",
+      "source": "OHM Psilocybin Prep Protocol"
+    },
+
+    {
+      "categoryId": "kratom",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; full taper may require longer for chronic users",
+      "restart": "Goal is often abstinence — restart resets opioid tolerance complications",
+      "notes": "Kratom has opioid receptor activity. Combined with iboga — same overdose-on-restart risk as other opioids. Often unreported by participants because considered 'herbal.' ASK directly.",
+      "source": "Pharmacology principles; harm reduction consensus"
+    },
+    {
+      "categoryId": "kratom",
+      "medicineId": "ayahuasca",
+      "risk": "high_caution",
+      "washout": "Minimum 1–2 weeks",
+      "restart": "Discuss",
+      "notes": "Some serotonergic activity + MAOI. Not as well-characterized as classic opioids but caution warranted.",
+      "source": "Harm reduction consensus"
+    },
+
+    {
+      "categoryId": "grapefruit",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Avoid 72h before",
+      "restart": "Avoid through integration period",
+      "notes": "Per Iboga Brief: grapefruit, licorice root, St. John's Wort all have CYP interactions affecting ibogaine metabolism.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+
+    {
+      "categoryId": "alcohol",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 72h for occasional use; MEDICAL TAPER REQUIRED for dependence",
+      "restart": "Minimum 1 week post-ceremony; consider longer for integration",
+      "notes": "Per GITA: alcohol dependence requires medical taper before iboga. Withdrawal during ceremony lowers seizure threshold significantly. Iboga itself doesn't cause seizures, but in withdrawal context the combination can be lethal.",
+      "source": "Iboga Screening & Monitoring Brief; GITA Clinical Guidelines"
+    },
+    {
+      "categoryId": "alcohol",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Minimum 72h prior",
+      "restart": "Minimum 24h post; ideally longer for integration",
+      "notes": "Per OHM Psilocybin Prep Protocol: minimum 72 hours prior. Heavy/dependent use requires assessment.",
+      "source": "OHM Psilocybin Prep Protocol"
+    },
+    {
+      "categoryId": "alcohol",
+      "medicineId": "5meodmt",
+      "risk": "review",
+      "washout": "Minimum 72h prior; ideally 30 days for full clearing",
+      "restart": "Minimum 24–48h post",
+      "notes": "Per OHM 5-MeO Prep Protocol and Conclave Best Practices: 30 days prior optimal; 72h minimum.",
+      "source": "OHM 5-MeO-DMT Prep Protocol; Conclave Best Practices"
+    },
+    {
+      "categoryId": "alcohol",
+      "medicineId": "ayahuasca",
+      "risk": "high_caution",
+      "washout": "Minimum 1 week prior; longer for traditional dieta",
+      "restart": "Minimum 1 week post; traditional dietas extend much longer",
+      "notes": "Traditional ayahuasca dieta restricts alcohol significantly. Tyramine in some alcoholic beverages (esp. aged wine, beer) compounds MAOI risk.",
+      "source": "Standard ayahuasca facilitator protocols"
+    },
+
+    {
+      "categoryId": "cannabis",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Minimum 72h; ideally 1–2 weeks for chronic users",
+      "restart": "Avoid during integration window (minimum 2–4 weeks post)",
+      "notes": "Cannabis can interact unpredictably with iboga's psychological effects. Chronic use also affects CYP metabolism.",
+      "source": "Harm reduction consensus"
+    },
+    {
+      "categoryId": "cannabis",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Minimum 72h prior",
+      "restart": "Avoid first 1–2 weeks integration",
+      "notes": "Per OHM Psilocybin Prep Protocol: avoid recreational substances. Cannabis can amplify anxiety and unpredictability during ceremony, and during integration can blunt insights.",
+      "source": "OHM Psilocybin Prep Protocol"
+    },
+    {
+      "categoryId": "cannabis",
+      "medicineId": "5meodmt",
+      "risk": "high_caution",
+      "washout": "Minimum 72h; ideally 30 days",
+      "restart": "Avoid during integration",
+      "notes": "Per OHM 5-MeO Prep Protocol: 'Recreational substances of any kind' avoided 72h+. 30 days for full clearing per Tandava.",
+      "source": "OHM 5-MeO-DMT Prep Protocol; Tandava Retreats"
+    },
+    {
+      "categoryId": "cannabis",
+      "medicineId": "ayahuasca",
+      "risk": "high_caution",
+      "washout": "Minimum 1 week prior; traditional dieta longer",
+      "restart": "Avoid during integration",
+      "notes": "Traditional ayahuasca dieta excludes cannabis. Can amplify nausea and psychological intensity unpredictably.",
+      "source": "Standard ayahuasca facilitator protocols"
+    },
+
+    {
+      "categoryId": "cbd",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Hold day-of and 24h prior",
+      "restart": "After ceremony if used",
+      "notes": "CBD can blunt psilocybin's effects. CBD also inhibits CYP enzymes — affects metabolism of other meds.",
+      "source": "Pharmacology principles"
+    },
+    {
+      "categoryId": "cbd",
+      "medicineId": "lsd",
+      "risk": "review",
+      "washout": "Hold day-of",
+      "restart": "After ceremony",
+      "notes": "May blunt effects; CYP interactions.",
+      "source": "Pharmacology principles"
+    },
+
+    {
+      "categoryId": "cocaine",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week, longer for chronic use; medical clearance",
+      "restart": "Goal often abstinence",
+      "notes": "Per Iboga Brief: stimulants/cocaine carry potentiation risk. Cardiotoxicity is the major concern.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "cocaine",
+      "medicineId": "mdma",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Compounded cardiotoxicity and hyperthermia.",
+      "source": "Harm reduction consensus"
+    },
+    {
+      "categoryId": "cocaine",
+      "medicineId": "5meodmt",
+      "risk": "absolute_no",
+      "washout": "Minimum 1 week",
+      "restart": "Avoid",
+      "notes": "Cardiac risk compounded; psychological destabilization.",
+      "source": "Harm reduction consensus"
+    },
+
+    {
+      "categoryId": "meth",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; medical clearance for chronic use",
+      "restart": "Goal abstinence",
+      "notes": "Cardiotoxicity. Withdrawal also a complicating factor for the iboga experience itself.",
+      "source": "Pharmacology principles"
+    },
+
+    {
+      "categoryId": "mdma_recreational",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Minimum 6 weeks recommended (serotonin replenishment)",
+      "restart": "N/A",
+      "notes": "Recent MDMA depletes serotonin. Subsequent psychedelic within ~6 weeks may be muted or dysphoric.",
+      "source": "Tripsit; harm reduction consensus"
+    },
+    {
+      "categoryId": "mdma_recreational",
+      "medicineId": "lsd",
+      "risk": "review",
+      "washout": "Minimum 6 weeks",
+      "restart": "N/A",
+      "notes": "Same as psilocybin.",
+      "source": "Tripsit"
+    },
+    {
+      "categoryId": "mdma_recreational",
+      "medicineId": "5meodmt",
+      "risk": "review",
+      "washout": "Minimum 6 weeks",
+      "restart": "N/A",
+      "notes": "Serotonin depletion + cardiac concerns.",
+      "source": "Harm reduction consensus"
+    },
+    {
+      "categoryId": "mdma_recreational",
+      "medicineId": "ayahuasca",
+      "risk": "high_caution",
+      "washout": "Minimum 6 weeks",
+      "restart": "N/A",
+      "notes": "Serotonin depletion + MAOI = unpredictable.",
+      "source": "Standard ayahuasca protocols"
+    },
+
+    {
+      "categoryId": "ketamine_recreational",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Minimum 1 week between ceremonies",
+      "restart": "N/A",
+      "notes": "No direct interaction but separating experiences allows integration.",
+      "source": "Common practice"
+    },
+
+    {
+      "categoryId": "nicotine",
+      "medicineId": "iboga",
+      "risk": "review",
+      "washout": "Minimize 24h before; cease day-of",
+      "restart": "Per individual",
+      "notes": "Adds cardiovascular load. Withdrawal during ceremony adds discomfort.",
+      "source": "OHM protocols; harm reduction"
+    },
+    {
+      "categoryId": "nicotine",
+      "medicineId": "5meodmt",
+      "risk": "review",
+      "washout": "Avoid day-of",
+      "restart": "Per individual",
+      "notes": "Per Conclave Best Practices: nicotine can disrupt mental and physical grounding.",
+      "source": "Conclave Best Practices"
+    },
+
+    {
+      "categoryId": "caffeine",
+      "medicineId": "iboga",
+      "risk": "review",
+      "washout": "Eliminate 24–48h before; cease day-of",
+      "restart": "After cardiac recovery",
+      "notes": "Adds cardiovascular load. Withdrawal headaches during ceremony complicate the picture.",
+      "source": "OHM protocols"
+    },
+    {
+      "categoryId": "caffeine",
+      "medicineId": "psilocybin",
+      "risk": "review",
+      "washout": "Reduce in prep week; avoid day-of",
+      "restart": "Light reintroduction post",
+      "notes": "Per OHM Psilocybin Prep Protocol: 'Reduce or eliminate alcohol and caffeine' in prep week. Can amplify anxiety.",
+      "source": "OHM Psilocybin Prep Protocol"
+    },
+    {
+      "categoryId": "caffeine",
+      "medicineId": "5meodmt",
+      "risk": "review",
+      "washout": "Eliminate in prep window",
+      "restart": "Light post-integration",
+      "notes": "Per OHM 5-MeO Prep Protocol: 'all stimulants: caffeine, pre-workouts, energy drinks' avoided.",
+      "source": "OHM 5-MeO-DMT Prep Protocol"
+    },
+
+    {
+      "categoryId": "tca",
+      "medicineId": "iboga",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks; coordinate taper",
+      "restart": "Coordinate with prescriber",
+      "notes": "Per Iboga Brief: TCAs are QT-prolonging. Additive cardiac risk.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "tca",
+      "medicineId": "ayahuasca",
+      "risk": "absolute_no",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate with prescriber",
+      "notes": "Serotonergic activity + MAOI.",
+      "source": "Standard ayahuasca protocols"
+    },
+    {
+      "categoryId": "tca",
+      "medicineId": "mdma",
+      "risk": "high_caution",
+      "washout": "Minimum 2 weeks",
+      "restart": "Coordinate",
+      "notes": "Serotonergic and cardiac risk.",
+      "source": "MAPS protocols"
+    },
+
+    {
+      "categoryId": "mood_stabilizer",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Discuss with prescriber; some require 2 weeks",
+      "restart": "Coordinate",
+      "notes": "Underlying condition (often bipolar) requires careful evaluation. Per OHM Pre-Screening: bipolar requires medical clearance.",
+      "source": "OHM Pre-Screening Questionnaire"
+    },
+    {
+      "categoryId": "mood_stabilizer",
+      "medicineId": "psilocybin",
+      "risk": "high_caution",
+      "washout": "Discuss with prescriber",
+      "restart": "Coordinate",
+      "notes": "Bipolar diagnosis requires high-risk medical clearance per OHM Pre-Screening.",
+      "source": "OHM Pre-Screening Questionnaire"
+    },
+
+    {
+      "categoryId": "beta_blocker",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Discuss with cardiologist — may need to hold or substitute",
+      "restart": "Per cardiology",
+      "notes": "Iboga causes bradycardia. Beta blockers compound bradycardia and AV block risk.",
+      "source": "Pharmacology principles; GITA"
+    },
+    {
+      "categoryId": "beta_blocker",
+      "medicineId": "mdma",
+      "risk": "review",
+      "washout": "Discuss with cardiologist",
+      "restart": "Per cardiology",
+      "notes": "Beta blockers blunt MDMA's stimulant effects (somewhat protective for HR/BP) but underlying cardiac condition remains a concern.",
+      "source": "Cardiology considerations"
+    },
+
+    {
+      "categoryId": "antihypertensive",
+      "medicineId": "iboga",
+      "risk": "high_caution",
+      "washout": "Discuss with prescriber — iboga causes hypotension, additive risk",
+      "restart": "Per cardiology",
+      "notes": "Iboga causes hypotension. Existing antihypertensives compound this. Underlying hypertension also a flag.",
+      "source": "Iboga Screening & Monitoring Brief"
+    },
+    {
+      "categoryId": "antihypertensive",
+      "medicineId": "mdma",
+      "risk": "high_caution",
+      "washout": "Discuss with cardiologist",
+      "restart": "Per cardiology",
+      "notes": "Underlying hypertension is itself a concern; MDMA acutely raises BP.",
+      "source": "MAPS protocols"
+    }
+  ],
+
+  "global_absolute_contraindications": {
+    "all_medicines": [
+      "Pregnancy or possible pregnancy",
+      "Active psychotic episode",
+      "Schizophrenia or any psychotic disorder diagnosis",
+      "Active suicidal ideation with a plan",
+      "Currently taking MAOIs (with most substances — see specifics)",
+      "Currently taking antipsychotic medication (must wash out)",
+      "Currently taking lithium (must wash out)"
+    ],
+    "iboga_additional": [
+      "QTc >450 ms (men) / >470 ms (women) on baseline ECG (some clinics use 430/450)",
+      "History of long QT syndrome, structural heart disease, recent MI",
+      "Untreated electrolyte derangement (K+ <4.0, Mg2+ <2.0)",
+      "Active alcohol or benzodiazepine dependence without medical taper"
+    ],
+    "kambo_additional": [
+      "Heart conditions",
+      "Recent surgery",
+      "Severe low blood pressure",
+      "History of stroke",
+      "Addison's disease",
+      "Active brain hemorrhage or aneurysm"
+    ]
+  },
+
+  "high_risk_requires_clearance": [
+    "Personal history of psychotic episode",
+    "Bipolar disorder diagnosis",
+    "History of seizures or epilepsy",
+    "Prior HPPD diagnosis",
+    "Severe lasting distress from prior psychedelic use",
+    "Currently in emotional crisis",
+    "Cardiovascular conditions (any)",
+    "Significant liver or kidney disease",
+    "History of stroke or TIA"
+  ]
+}
