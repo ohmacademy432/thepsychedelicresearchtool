@@ -1,7 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import rawSeedData from "./data/seed-data.json";
 import { validateSeedData } from "./data/validate";
 import type { SeedData } from "./types/seed-data";
+import type { Question } from "./types/question";
+import {
+  PLACEHOLDER_ANSWER_MARKDOWN,
+  PLACEHOLDER_SOURCES,
+} from "./data/placeholderAnswer";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { HistorySidebar } from "./components/HistorySidebar";
+import { QuestionBuilder } from "./components/QuestionBuilder";
+import { AnswerView } from "./components/AnswerView";
 
 type LoadResult =
   | { ok: true; data: SeedData }
@@ -18,35 +28,10 @@ function loadSeedData(): LoadResult {
   }
 }
 
-function Header() {
-  return (
-    <header className="border-b border-sage/40 bg-parchment-soft">
-      <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6">
-        <h1 className="font-serif text-xl font-semibold text-forest sm:text-2xl">
-          OHM Academy{" "}
-          <span className="text-sage-deep">— Facilitator Screening Tool</span>
-        </h1>
-      </div>
-    </header>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-sage/40 bg-parchment-soft">
-      <div className="mx-auto max-w-5xl px-4 py-4 text-sm text-charcoal-soft sm:px-6">
-        Research tool for OHM facilitators. Answers are AI-generated and may
-        be incomplete or incorrect. Verify all clinical decisions with
-        licensed medical review.
-      </div>
-    </footer>
-  );
-}
-
 function ErrorScreen({ error }: { error: Error }) {
   return (
     <div className="flex min-h-screen flex-col bg-parchment text-charcoal">
-      <Header />
+      <Header onToggleDrawer={() => {}} drawerOpen={false} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
         <div className="rounded-md border border-risk-red-text/30 bg-risk-red-bg p-6">
           <h2 className="font-serif text-lg font-semibold text-risk-red-text">
@@ -71,17 +56,70 @@ function ErrorScreen({ error }: { error: Error }) {
 
 function App() {
   const result = useMemo(loadSeedData, []);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (!result.ok) return <ErrorScreen error={result.error} />;
 
+  const active = questions.find((q) => q.id === activeId) ?? null;
+
+  const handleSubmit = (formattedQuestion: string) => {
+    const q: Question = {
+      id:
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `q_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      formattedQuestion,
+      answerMarkdown: PLACEHOLDER_ANSWER_MARKDOWN,
+      sources: PLACEHOLDER_SOURCES,
+      createdAt: Date.now(),
+    };
+    setQuestions((prev) => [q, ...prev]);
+    setActiveId(q.id);
+    setDrawerOpen(false);
+  };
+
+  const handleNewQuestion = () => {
+    setActiveId(null);
+    setDrawerOpen(false);
+  };
+
+  const handleSelectFromHistory = (id: string) => {
+    setActiveId(id);
+    setDrawerOpen(false);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-parchment text-charcoal">
-      <Header />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
-        <p className="text-charcoal-soft">
-          Lookup UI removed. Chat UI rebuild in progress — placeholder shell.
-        </p>
-      </main>
+      <Header
+        onToggleDrawer={() => setDrawerOpen((v) => !v)}
+        drawerOpen={drawerOpen}
+      />
+
+      <div className="mx-auto flex w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 md:gap-6">
+        <HistorySidebar
+          questions={questions}
+          activeId={activeId}
+          drawerOpen={drawerOpen}
+          onNewQuestion={handleNewQuestion}
+          onSelect={handleSelectFromHistory}
+          onCloseDrawer={() => setDrawerOpen(false)}
+        />
+
+        <main className="min-w-0 flex-1">
+          {active ? (
+            <AnswerView
+              key={active.id}
+              question={active}
+              onNewQuestion={handleNewQuestion}
+            />
+          ) : (
+            <QuestionBuilder onSubmit={handleSubmit} />
+          )}
+        </main>
+      </div>
+
       <Footer />
     </div>
   );
