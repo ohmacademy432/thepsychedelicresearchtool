@@ -5,16 +5,20 @@ import { Markdown } from "./Markdown";
 interface Props {
   question: Question;
   onNewQuestion: () => void;
+  onFollowUp: (formattedQuestion: string) => void;
 }
 
 const COLLAPSE_THRESHOLD = 240;
 
-export function AnswerView({ question, onNewQuestion }: Props) {
+export function AnswerView({ question, onNewQuestion, onFollowUp }: Props) {
   const [followUpOpen, setFollowUpOpen] = useState(false);
   const [followUpText, setFollowUpText] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "ok" | "err">("idle");
 
   const long = question.formattedQuestion.length > COLLAPSE_THRESHOLD;
+  const isStreaming = question.status === "streaming";
+  const isError = question.status === "error";
+  const hasMarkdown = question.answerMarkdown.trim() !== "";
 
   const copyAnswer = async () => {
     try {
@@ -27,40 +31,49 @@ export function AnswerView({ question, onNewQuestion }: Props) {
     }
   };
 
+  const sendFollowUp = () => {
+    const trimmed = followUpText.trim();
+    if (trimmed === "" || isStreaming) return;
+    onFollowUp(trimmed);
+    setFollowUpText("");
+    setFollowUpOpen(false);
+  };
+
   return (
     <section>
       <QuotedQuestion text={question.formattedQuestion} long={long} />
 
-      <div className="mt-6">
-        <Markdown>{question.answerMarkdown}</Markdown>
-      </div>
+      {!hasMarkdown && isStreaming && (
+        <div className="mt-6 flex items-center gap-2 text-sm text-charcoal-soft">
+          <PulsingDot />
+          <span>Researching — this usually takes 15–40 seconds.</span>
+        </div>
+      )}
 
-      {question.sources.length > 0 && (
-        <section className="mt-8 border-t border-sage/40 pt-5">
-          <h3 className="font-serif text-lg font-semibold text-forest">
-            Sources
+      {hasMarkdown && (
+        <div className="mt-6">
+          <Markdown>{question.answerMarkdown}</Markdown>
+          {isStreaming && (
+            <div className="mt-2 flex items-center gap-2 text-sm text-charcoal-soft">
+              <PulsingDot />
+              <span>Streaming response…</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {isError && (
+        <div className="mt-6 rounded-md border border-risk-red-text/30 bg-risk-red-bg p-4">
+          <h3 className="font-serif text-base font-semibold text-risk-red-text">
+            Research failed
           </h3>
-          <ol className="mt-3 list-decimal space-y-2 pl-6 text-charcoal">
-            {question.sources.map((s) => (
-              <li key={s.anchorId} id={s.anchorId} className="leading-relaxed">
-                <span>{s.label}</span>
-                {s.url && (
-                  <>
-                    {" — "}
-                    <a
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-forest underline decoration-sage-deep/40 underline-offset-2 hover:decoration-forest"
-                    >
-                      {s.url}
-                    </a>
-                  </>
-                )}
-              </li>
-            ))}
-          </ol>
-        </section>
+          <pre className="mt-2 overflow-x-auto whitespace-pre-wrap font-mono text-sm text-risk-red-text">
+            {question.error ?? "Unknown error"}
+          </pre>
+          <p className="mt-3 text-sm text-charcoal-soft">
+            Try again, or simplify the question.
+          </p>
+        </div>
       )}
 
       <div className="mt-6 flex flex-wrap gap-2">
@@ -68,7 +81,8 @@ export function AnswerView({ question, onNewQuestion }: Props) {
           type="button"
           onClick={() => setFollowUpOpen((v) => !v)}
           aria-expanded={followUpOpen}
-          className="rounded-md border border-sage/50 bg-parchment-soft px-4 py-2 text-sm font-medium text-forest hover:border-forest/60 hover:bg-sage/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest/40"
+          disabled={isStreaming}
+          className="rounded-md border border-sage/50 bg-parchment-soft px-4 py-2 text-sm font-medium text-forest hover:border-forest/60 hover:bg-sage/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest/40 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Ask follow-up
         </button>
@@ -82,7 +96,8 @@ export function AnswerView({ question, onNewQuestion }: Props) {
         <button
           type="button"
           onClick={copyAnswer}
-          className="rounded-md border border-sage/50 bg-parchment-soft px-4 py-2 text-sm font-medium text-forest hover:border-forest/60 hover:bg-sage/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest/40"
+          disabled={!hasMarkdown}
+          className="rounded-md border border-sage/50 bg-parchment-soft px-4 py-2 text-sm font-medium text-forest hover:border-forest/60 hover:bg-sage/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest/40 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {copyState === "ok"
             ? "Copied!"
@@ -100,26 +115,27 @@ export function AnswerView({ question, onNewQuestion }: Props) {
           >
             Follow-up question
           </label>
+          <p className="mt-1 text-xs text-charcoal-soft/80">
+            Sent as a fresh research question. Include any context from the
+            original — this step does not carry over prior conversation.
+          </p>
           <textarea
             id="follow-up-input"
             rows={3}
             value={followUpText}
             onChange={(e) => setFollowUpText(e.target.value)}
-            className="mt-1 w-full rounded-md border border-sage/50 bg-parchment px-3 py-2 text-base text-charcoal placeholder:text-charcoal-soft/60 focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
+            className="mt-2 w-full rounded-md border border-sage/50 bg-parchment px-3 py-2 text-base text-charcoal placeholder:text-charcoal-soft/60 focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/30"
             placeholder="What additional context do you need?"
           />
           <div className="mt-2 flex items-center gap-3">
             <button
               type="button"
-              disabled
-              className="cursor-not-allowed rounded-md bg-sage-deep/40 px-3 py-1.5 text-sm font-medium text-parchment-soft/80"
-              title="Follow-up submission will chain to the same research in the next API step."
+              onClick={sendFollowUp}
+              disabled={followUpText.trim() === "" || isStreaming}
+              className="rounded-md bg-forest px-3 py-1.5 text-sm font-medium text-parchment-soft shadow-sm transition hover:bg-forest-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-forest/40 disabled:cursor-not-allowed disabled:bg-sage-deep/40 disabled:text-parchment-soft/80"
             >
               Send follow-up
             </button>
-            <span className="text-xs italic text-charcoal-soft/80">
-              Submission wires up in the next step (API).
-            </span>
           </div>
         </div>
       )}
@@ -129,6 +145,15 @@ export function AnswerView({ question, onNewQuestion }: Props) {
         Verify with licensed medical review before clinical decisions.
       </div>
     </section>
+  );
+}
+
+function PulsingDot() {
+  return (
+    <span
+      className="inline-block h-2 w-2 animate-pulse rounded-full bg-forest"
+      aria-hidden="true"
+    />
   );
 }
 

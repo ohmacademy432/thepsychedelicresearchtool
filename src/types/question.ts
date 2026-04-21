@@ -25,20 +25,16 @@ export interface StructuredQuestionInput {
   plainLanguage: string;
 }
 
-export interface Source {
-  number: number;
-  label: string;
-  /** Anchor target id, used by inline [n] markers in the markdown body. */
-  anchorId: string;
-  /** Optional — internal references may have no public URL. */
-  url?: string;
-}
+export type QuestionStatus = "streaming" | "done" | "error";
 
 export interface Question {
   id: string;
-  /** Human-readable assembled question shown back to the facilitator in MODE B. */
+  /** Human-readable assembled question shown back to the facilitator. */
   formattedQuestion: string;
+  /** Accumulates progressively as tokens arrive from the API. */
   answerMarkdown: string;
-  sources: Source[];
   createdAt: number;
+  status: QuestionStatus;
+  /** Populated only when status === "error". */
+  error?: string;
 }

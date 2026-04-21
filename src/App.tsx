@@ -1,12 +1,8 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import rawSeedData from "./data/seed-data.json";
 import { validateSeedData } from "./data/validate";
 import type { SeedData } from "./types/seed-data";
 import type { Question } from "./types/question";
-import {
-  PLACEHOLDER_ANSWER_MARKDOWN,
-  PLACEHOLDER_SOURCES,
-} from "./data/placeholderAnswer";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { HistorySidebar } from "./components/HistorySidebar";
@@ -54,30 +50,161 @@ function ErrorScreen({ error }: { error: Error }) {
   );
 }
 
+function newId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `q_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+}
+
+const ASK_ENDPOINT = "/.netlify/functions/ask";
+const ERROR_MARKER_START = "<<<STREAM_ERROR>>>";
+const ERROR_MARKER_END = "<<<END>>>";
+
+/**
+ * Parse a streamed buffer for the in-band error marker the serverless
+ * function emits if the Anthropic call throws mid-stream. Returns the
+ * visible markdown (before the marker) and the extracted error message
+ * when the marker is present, or null when no marker is found yet.
+ */
+function extractStreamError(
+  buffer: string,
+): { cleanMarkdown: string; errorMessage: string } | null {
+  const startIdx = buffer.indexOf(ERROR_MARKER_START);
+  if (startIdx === -1) return null;
+  const afterStart = startIdx + ERROR_MARKER_START.length;
+  const endIdx = buffer.indexOf(ERROR_MARKER_END, afterStart);
+  const errorMessage =
+    endIdx === -1
+      ? buffer.slice(afterStart)
+      : buffer.slice(afterStart, endIdx);
+  return {
+    cleanMarkdown: buffer.slice(0, startIdx).trimEnd(),
+    errorMessage: errorMessage.trim() || "Unknown streaming error",
+  };
+}
+
 function App() {
   const result = useMemo(loadSeedData, []);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const updateQuestion = useCallback(
+    (id: string, updater: (q: Question) => Question) => {
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === id ? updater(q) : q)),
+      );
+    },
+    [],
+  );
+
+  const streamAnswer = useCallback(
+    async (id: string, formattedQuestion: string) => {
+      try {
+        const response = await fetch(ASK_ENDPOINT, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ question: formattedQuestion }),
+        });
+
+        if (!response.ok) {
+          let detail = `HTTP ${response.status}`;
+          try {
+            const data = (await response.json()) as { error?: string };
+            if (data?.error) detail = data.error;
+          } catch {
+            // response body wasn't JSON; keep the status-code fallback
+          }
+          updateQuestion(id, (q) => ({
+            ...q,
+            status: "error",
+            error: detail,
+          }));
+          return;
+        }
+
+        if (!response.body) {
+          updateQuestion(id, (q) => ({
+            ...q,
+            status: "error",
+            error: "Server returned no response body.",
+          }));
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let errored = false;
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const parsed = extractStreamError(buffer);
+          if (parsed) {
+            updateQuestion(id, (q) => ({
+              ...q,
+              answerMarkdown: parsed.cleanMarkdown,
+              status: "error",
+              error: parsed.errorMessage,
+            }));
+            errored = true;
+            break;
+          }
+
+          updateQuestion(id, (q) => ({ ...q, answerMarkdown: buffer }));
+        }
+
+        if (!errored) {
+          buffer += decoder.decode();
+          const parsed = extractStreamError(buffer);
+          if (parsed) {
+            updateQuestion(id, (q) => ({
+              ...q,
+              answerMarkdown: parsed.cleanMarkdown,
+              status: "error",
+              error: parsed.errorMessage,
+            }));
+          } else {
+            updateQuestion(id, (q) => ({
+              ...q,
+              answerMarkdown: buffer,
+              status: "done",
+            }));
+          }
+        }
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Network error";
+        updateQuestion(id, (q) => ({
+          ...q,
+          status: "error",
+          error: msg,
+        }));
+      }
+    },
+    [updateQuestion],
+  );
+
   if (!result.ok) return <ErrorScreen error={result.error} />;
 
   const active = questions.find((q) => q.id === activeId) ?? null;
 
-  const handleSubmit = (formattedQuestion: string) => {
+  const startQuestion = (formattedQuestion: string) => {
     const q: Question = {
-      id:
-        typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? crypto.randomUUID()
-          : `q_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      id: newId(),
       formattedQuestion,
-      answerMarkdown: PLACEHOLDER_ANSWER_MARKDOWN,
-      sources: PLACEHOLDER_SOURCES,
+      answerMarkdown: "",
       createdAt: Date.now(),
+      status: "streaming",
     };
     setQuestions((prev) => [q, ...prev]);
     setActiveId(q.id);
     setDrawerOpen(false);
+    void streamAnswer(q.id, formattedQuestion);
   };
 
   const handleNewQuestion = () => {
@@ -113,9 +240,10 @@ function App() {
               key={active.id}
               question={active}
               onNewQuestion={handleNewQuestion}
+              onFollowUp={startQuestion}
             />
           ) : (
-            <QuestionBuilder onSubmit={handleSubmit} />
+            <QuestionBuilder onSubmit={startQuestion} />
           )}
         </main>
       </div>
