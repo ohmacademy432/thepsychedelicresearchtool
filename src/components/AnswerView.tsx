@@ -46,7 +46,7 @@ export function AnswerView({ question, onNewQuestion, onFollowUp }: Props) {
       {!hasMarkdown && isStreaming && (
         <div className="mt-6 flex items-center gap-2 text-sm text-charcoal-soft">
           <PulsingDot />
-          <span>Researching — this usually takes 15–40 seconds.</span>
+          <span>Researching — this usually takes 1–5 minutes.</span>
         </div>
       )}
 

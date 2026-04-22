@@ -1,33 +1,32 @@
-# OHM Academy — Facilitator Screening Tool
+# The Psychedelic Nurse — Clinical Research Companion
 
-An internal lookup tool for OHM Academy of Spiritual Healing facilitators to
-check medication, supplement, and street-drug compatibility with the plant
-medicines used in ceremony work (Iboga / Ibogaine, Psilocybin, LSD, MDMA,
-5-MeO-DMT, N,N-DMT, Ayahuasca, Kambo).
+Clinical research companion for licensed facilitators and clinicians working
+with plant medicines. Ask clinical questions, get researched answers with
+citations.
 
-**For OHM Academy facilitators only.** This tool is not for general public use.
+Substances covered: Iboga / Ibogaine, Psilocybin, LSD, MDMA, 5-MeO-DMT,
+N,N-DMT, Ayahuasca, Kambo.
+
+**For approved licensed facilitators, clinicians, nurses, therapists, and
+physicians only.** Access is gated; casual public use is not intended.
 
 ## Disclaimer
 
-Harm-reduction reference only. **Not medical advice.** Every flagged
-interaction requires licensed clinician sign-off before ceremony. The data in
-this tool was hand-curated from clinical-grade sources (GITA Clinical
-Guidelines, MAPS, Conclave Best Practices, OHM's own protocols), but it is a
-reference aid — not a substitute for medical screening, prescriber review, or
-clinical judgment.
-
-If a substance combination is not present in the reference, the tool will
-display **"Not in reference — escalate to medical review"**. Do not infer
-safety from absence.
+Clinical research companion — **not medical advice**. AI-generated research
+is provided as decision support; verify with independent clinical review
+before making treatment decisions. Every flagged interaction requires
+licensed clinician sign-off before ceremony work. The tool is a
+harm-reduction reference, not a substitute for medical screening,
+prescriber review, or clinical judgment.
 
 ## Privacy
 
-Participant questions are sent to a Netlify serverless function that calls
+Submitted questions are sent to a Netlify serverless function that calls
 the Claude API (with web search) to research the question. The response
 streams back to the browser. The browser history is React-state only and
 clears on tab close. No screening content is persisted on any server —
-Netlify does not log request bodies, and the API key lives only in server
-env vars.
+Netlify does not log request bodies, and the API key lives only in
+server-side environment variables.
 
 ## Setup
 
@@ -70,12 +69,18 @@ Environment variables**. Never commit the key to git.
 - Tailwind CSS v4
 - Netlify serverless function (`netlify/functions/ask.ts`) wraps the
   Anthropic SDK with web search enabled, streams text back to the browser
-- Static deploy to Netlify (auto-deploy from GitHub `main`)
+- Static deploy to Netlify (auto-deploy from GitHub `main` when configured)
 
 ## Data
 
 The seed file [`src/data/seed-data.json`](src/data/seed-data.json) contains
-OHM's hand-curated reference (GITA, MAPS, Conclave Best Practices, OHM's
-own protocols). It is retained for reference and for any future offline or
+a hand-curated reference (GITA, MAPS, Conclave Best Practices, and
+historical OHM protocols authored by The Psychedelic Nurse prior to
+rebrand). It is retained for reference and for any future offline or
 fallback lookup, but the live chat UI does not query it directly — it
 routes screening questions to the Claude API with web search.
+
+## About
+
+Published by [The Psychedelic Nurse](https://www.thepsychedelicnurse.org) as
+a harm-reduction resource for the clinical facilitator community.

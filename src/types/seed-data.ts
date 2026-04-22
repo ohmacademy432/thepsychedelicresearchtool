@@ -69,7 +69,7 @@ export interface Interaction {
    *   2 = practitioner consensus publications (Tripsit, Conclave Best
    *       Practices, EntheoNation, Fireside Project, MAPS integration
    *       workbooks, MSKCC About Herbs)
-   *   3 = OHM internal protocols / curator judgment
+   *   3 = Curator internal protocols / The Psychedelic Nurse judgment (historical OHM protocols retained as-is for provenance)
    * Optional. Existing entries default to undefined and remain valid.
    */
   sourceTier?: SourceTier;

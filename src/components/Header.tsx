@@ -32,8 +32,8 @@ export function Header({ onToggleDrawer, drawerOpen }: Props) {
           </svg>
         </button>
         <h1 className="font-serif text-lg font-semibold text-forest sm:text-xl md:text-2xl">
-          OHM Academy{" "}
-          <span className="text-sage-deep">— Facilitator Screening Tool</span>
+          The Psychedelic Nurse{" "}
+          <span className="text-sage-deep">— Clinical Research Companion</span>
         </h1>
       </div>
     </header>
