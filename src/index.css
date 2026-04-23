@@ -34,3 +34,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Auth form inputs — shared styling for the signup and login screens */
+.input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(156, 174, 148, 0.5); /* sage/50 */
+  border-radius: 0.375rem;
+  background-color: #ffffff;
+  color: var(--color-charcoal);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 3px rgba(46, 74, 42, 0.15);
+}
+.input:disabled {
+  background-color: var(--color-parchment-soft);
+  cursor: not-allowed;
+}
+textarea.input {
+  resize: vertical;
+  min-height: 5rem;
+}

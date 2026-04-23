@@ -8,6 +8,9 @@ import { Footer } from "./components/Footer";
 import { HistorySidebar } from "./components/HistorySidebar";
 import { QuestionBuilder } from "./components/QuestionBuilder";
 import { AnswerView } from "./components/AnswerView";
+import { AuthScreen } from "./components/AuthScreen";
+import { PendingApprovalScreen } from "./components/PendingApprovalScreen";
+import { useAuth } from "./lib/auth-context";
 
 type LoadResult =
   | { ok: true; data: SeedData }
@@ -24,29 +27,65 @@ function loadSeedData(): LoadResult {
   }
 }
 
-function ErrorScreen({ error }: { error: Error }) {
+function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-parchment text-charcoal">
       <Header onToggleDrawer={() => {}} drawerOpen={false} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
-        <div className="rounded-md border border-risk-red-text/30 bg-risk-red-bg p-6">
-          <h2 className="font-serif text-lg font-semibold text-risk-red-text">
-            Reference data could not be loaded
-          </h2>
-          <p className="mt-2 text-charcoal-soft">
-            The screening tool refuses to display partial or inconsistent
-            interaction data. Until this is fixed, no lookups will work.
-          </p>
-          <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded bg-parchment-soft p-3 font-mono text-sm text-risk-red-text">
-            {error.message}
-          </pre>
-          <p className="mt-4 text-sm text-charcoal-soft">
-            Notify the maintainer with the message above.
-          </p>
-        </div>
+        {children}
       </main>
       <Footer />
     </div>
+  );
+}
+
+function ErrorScreen({ error }: { error: Error }) {
+  return (
+    <PageShell>
+      <div className="rounded-md border border-risk-red-text/30 bg-risk-red-bg p-6">
+        <h2 className="font-serif text-lg font-semibold text-risk-red-text">
+          Reference data could not be loaded
+        </h2>
+        <p className="mt-2 text-charcoal-soft">
+          The screening tool refuses to display partial or inconsistent
+          interaction data. Until this is fixed, no lookups will work.
+        </p>
+        <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded bg-parchment-soft p-3 font-mono text-sm text-risk-red-text">
+          {error.message}
+        </pre>
+        <p className="mt-4 text-sm text-charcoal-soft">
+          Notify the maintainer with the message above.
+        </p>
+      </div>
+    </PageShell>
+  );
+}
+
+function ConfigErrorScreen() {
+  return (
+    <PageShell>
+      <div className="rounded-md border border-risk-red-text/30 bg-risk-red-bg p-6">
+        <h2 className="font-serif text-lg font-semibold text-risk-red-text">
+          Supabase is not configured
+        </h2>
+        <p className="mt-2 text-charcoal-soft">
+          The authentication layer needs <code>VITE_SUPABASE_URL</code> and{" "}
+          <code>VITE_SUPABASE_ANON_KEY</code> set in <code>.env.local</code>{" "}
+          at the project root. Add them and restart the dev server.
+        </p>
+      </div>
+    </PageShell>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <PageShell>
+      <div className="flex items-center gap-3 text-sm text-charcoal-soft">
+        <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-forest" />
+        <span>Loading session…</span>
+      </div>
+    </PageShell>
   );
 }
 
@@ -84,8 +123,7 @@ function extractStreamError(
   };
 }
 
-function App() {
-  const result = useMemo(loadSeedData, []);
+function ResearchTool({ data: _seedData }: { data: SeedData }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -189,8 +227,6 @@ function App() {
     [updateQuestion],
   );
 
-  if (!result.ok) return <ErrorScreen error={result.error} />;
-
   const active = questions.find((q) => q.id === activeId) ?? null;
 
   const startQuestion = (formattedQuestion: string) => {
@@ -251,6 +287,69 @@ function App() {
       <Footer />
     </div>
   );
+}
+
+function App() {
+  const result = useMemo(loadSeedData, []);
+  const { configured, loading, profileLoading, user, profile } = useAuth();
+
+  if (!result.ok) return <ErrorScreen error={result.error} />;
+  if (!configured) return <ConfigErrorScreen />;
+  if (loading) return <LoadingScreen />;
+
+  // Not signed in → show auth screen (defaults to login, users can toggle to signup)
+  if (!user) {
+    return (
+      <PageShell>
+        <AuthScreen />
+      </PageShell>
+    );
+  }
+
+  // Signed in but profile hasn't loaded yet — show a brief loading state
+  // rather than flashing the "profile setup incomplete" warning.
+  if (profileLoading && !profile) {
+    return <LoadingScreen />;
+  }
+
+  // Signed in but profile is genuinely absent (edge case: auth row exists,
+  // profile row missing — happens if profile insert failed at signup time).
+  if (!profile) {
+    return (
+      <PageShell>
+        <div className="rounded-md border border-risk-amber-text/30 bg-risk-amber-bg p-6">
+          <h2 className="font-serif text-lg font-semibold text-risk-amber-text">
+            Profile setup incomplete
+          </h2>
+          <p className="mt-2 text-charcoal-soft">
+            Your account exists but no profile was found. This can happen if
+            signup was interrupted. Please contact{" "}
+            <a
+              href="https://www.thepsychedelicnurse.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              thepsychedelicnurse.org
+            </a>{" "}
+            for assistance.
+          </p>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // Signed in but not yet approved
+  if (!profile.approved) {
+    return (
+      <PageShell>
+        <PendingApprovalScreen />
+      </PageShell>
+    );
+  }
+
+  // Signed in + approved → full research tool
+  return <ResearchTool data={result.data} />;
 }
 
 export default App;

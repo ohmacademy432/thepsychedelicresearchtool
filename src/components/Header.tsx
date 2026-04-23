@@ -1,9 +1,13 @@
+import { useAuth } from "../lib/auth-context";
+
 interface Props {
   onToggleDrawer: () => void;
   drawerOpen: boolean;
 }
 
 export function Header({ onToggleDrawer, drawerOpen }: Props) {
+  const { user, signOut } = useAuth();
+
   return (
     <header className="border-b border-sage/40 bg-parchment-soft">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4 sm:px-6">
@@ -31,10 +35,20 @@ export function Header({ onToggleDrawer, drawerOpen }: Props) {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <h1 className="font-serif text-lg font-semibold text-forest sm:text-xl md:text-2xl">
+        <h1 className="flex-1 font-serif text-lg font-semibold text-forest sm:text-xl md:text-2xl">
           The Psychedelic Nurse{" "}
           <span className="text-sage-deep">— Clinical Research Companion</span>
         </h1>
+        {user && (
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            className="rounded-md border border-sage/40 px-3 py-1.5 text-xs text-forest hover:bg-forest/5 sm:text-sm"
+            aria-label="Sign out"
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </header>
   );

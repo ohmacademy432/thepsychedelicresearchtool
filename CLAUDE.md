@@ -93,4 +93,43 @@ Also in this session: tightened **SOURCE QUALITY REQUIREMENTS** in the system pr
 
 Also added **SOURCE RECENCY FLAGGING** to the system prompt. The netlify function computes `CURRENT_YEAR` at server start; any citation with a publication year at or before `CURRENT_YEAR - 10` gets appended with a markdown warning: `⚠ *Published over 10 years ago — clinical framework may still apply, but verify specific recommendations against newer literature.*`. This keeps foundational but aging sources (GITA Clinical Guidelines from 2015-16, Koenig 2014/2015 hERG papers) in the citation list while making their age visible to the facilitator. Threshold auto-rolls forward each year; no maintenance needed.
 
-Next planned work: add Supabase Auth with admin approval gate before any deploy. Local folder still named `ohmacademytool` (cosmetic; rename in a future session).
+---
+
+**April 22, 2026 — Cowork session, later:** Added **Supabase Auth with admin approval gate**.
+
+New dependency: `@supabase/supabase-js` in package.json. Requires `npm install` on first use.
+
+New env vars (add to `.env.local`):
+- `VITE_SUPABASE_URL` — the project URL from Supabase dashboard
+- `VITE_SUPABASE_ANON_KEY` — the anon/public key (safe for browser; protection comes from RLS policies)
+
+New files:
+- `src/lib/supabase.ts` — Supabase client, `Profile` type
+- `src/lib/auth-context.tsx` — AuthProvider + useAuth hook; manages session, profile, signUp/signIn/signOut, and listens to onAuthStateChange
+- `src/components/SignupScreen.tsx` — request-access form (email, password, name, professional role, credentials, org, request note)
+- `src/components/LoginScreen.tsx` — email + password
+- `src/components/PendingApprovalScreen.tsx` — shown to logged-in users with `approved=false`; has "Check status" and "Sign out"
+- `src/components/AuthScreen.tsx` — toggles between login and signup
+
+Modified files:
+- `src/main.tsx` — wraps App with AuthProvider
+- `src/App.tsx` — extracted ResearchTool component; App() now routes by auth state: not configured → ConfigErrorScreen · loading → LoadingScreen · no user → AuthScreen · user without profile → setup-incomplete warning · user with !approved → PendingApprovalScreen · user with approved → ResearchTool
+- `src/components/Header.tsx` — shows "Sign out" button when a user is signed in
+- `src/index.css` — added `.input` utility class for auth form fields
+- `CLAUDE.md` — this entry
+
+Database schema (Supabase):
+- `profiles` table with: `id` (FK to auth.users), `full_name`, `professional_role`, `credentials`, `organization`, `access_request_note`, `approved` (bool, default false), `approved_at`, `approved_by`, `created_at`, `updated_at`
+- RLS: users can SELECT and INSERT their own profile; UPDATE is intentionally NOT exposed to users — approval happens via the Supabase dashboard (which uses service_role and bypasses RLS)
+
+Approval workflow:
+1. User signs up via `/` (redirected to AuthScreen) — creates auth.users row + profiles row with `approved=false`
+2. User sees PendingApprovalScreen, can sign out or click "Check status"
+3. April opens Supabase dashboard → Table Editor → profiles, sets `approved=true` (optionally `approved_at=now()` and `approved_by='April'`)
+4. User clicks "Check status" → refetches profile → now approved → sees the ResearchTool
+
+**Important Supabase config step:** disable email confirmation in Supabase dashboard (Authentication → Providers → Email → toggle OFF "Confirm email") for the dev/test workflow. If left on, signups require verifying a real email before the account is usable — fine for production, painful for testing with fake emails.
+
+Not yet deployed. Local testing workflow: `npm install` to pick up new deps, then `npx netlify dev`.
+
+Next planned work: link up a working AI backend (Anthropic once the account_tier issue is resolved, or migrate to OpenAI if needed). Local folder still named `ohmacademytool` (cosmetic; rename in a future session).
