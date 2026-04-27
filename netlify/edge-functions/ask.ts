@@ -1,10 +1,12 @@
-// Netlify Edge Functions run on Deno. The npm: specifier lets us reuse
-// the same Anthropic SDK without bundling it through Node.
-import Anthropic from "npm:@anthropic-ai/sdk@^0.90.0";
-
 // Netlify provides a global `Netlify.env.get()` for env-var access in
 // Edge Functions (instead of process.env).
 declare const Netlify: { env: { get(key: string): string | undefined } };
+
+// This Edge Function calls the Anthropic Messages API via direct fetch
+// rather than @anthropic-ai/sdk. Netlify Edge Functions do not support
+// npm modules at bundle time (esbuild cannot resolve `npm:` specifiers
+// in this runtime), so we handcraft the SSE parser below. Same prompt,
+// same model, same tools — just no SDK in the path.
 
 // Used by the source recency flagging instructions in the system prompt.
 // Any citation with a publication year at or before OLD_SOURCE_YEAR is flagged
@@ -155,54 +157,128 @@ export default async (req: Request): Promise<Response> => {
     return jsonError(400, "Invalid JSON body.");
   }
 
-  const client = new Anthropic({ apiKey });
+  // Build the Anthropic Messages API request body. Same shape the SDK
+  // would have used: streaming on, adaptive thinking on, web_search tool.
+  const anthropicBody = {
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    stream: true,
+    system: [
+      {
+        type: "text",
+        text: SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
+    thinking: { type: "adaptive" },
+    tools: [{ type: "web_search_20260209", name: "web_search" }],
+    messages: [
+      { role: "user", content: `${USER_MESSAGE_PREFIX}${question}` },
+    ],
+  };
+
+  let upstream: Response;
+  try {
+    upstream = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(anthropicBody),
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return jsonError(502, `Failed to reach Anthropic API: ${msg}`);
+  }
+
+  if (!upstream.ok || !upstream.body) {
+    let detail = `${upstream.status}`;
+    try {
+      const errBody = await upstream.text();
+      detail = `${upstream.status}: ${errBody.slice(0, 500)}`;
+    } catch {
+      // keep status-only fallback
+    }
+    return jsonError(
+      upstream.status >= 500 ? 502 : upstream.status,
+      `Anthropic API error ${detail}`,
+    );
+  }
+
+  // Convert Anthropic's SSE stream to a plain-text token stream the
+  // browser can consume directly. We parse only `content_block_delta`
+  // events whose delta is a `text_delta`; everything else (thinking
+  // blocks, tool-use blocks, message_stop, ping, etc.) is silently
+  // skipped — we just want the visible markdown the model produces.
+  const sourceReader = upstream.body.getReader();
+  const decoder = new TextDecoder();
+  let sseBuffer = "";
 
   const readable = new ReadableStream<Uint8Array>({
     async start(controller) {
       const encoder = new TextEncoder();
       try {
-        const stream = client.messages.stream({
-          model: MODEL,
-          max_tokens: MAX_TOKENS,
-          system: [
-            {
-              type: "text",
-              text: SYSTEM_PROMPT,
-              cache_control: { type: "ephemeral" },
-            },
-          ],
-          thinking: { type: "adaptive" },
-          tools: [{ type: "web_search_20260209", name: "web_search" }],
-          messages: [
-            { role: "user", content: `${USER_MESSAGE_PREFIX}${question}` },
-          ],
-        });
+        while (true) {
+          const { value, done } = await sourceReader.read();
+          if (done) break;
 
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
+          sseBuffer += decoder.decode(value, { stream: true });
+
+          // SSE events are separated by a blank line. Split off complete
+          // events; keep any partial event for the next chunk.
+          const events = sseBuffer.split("\n\n");
+          sseBuffer = events.pop() ?? "";
+
+          for (const event of events) {
+            if (!event.trim()) continue;
+            const dataLine = event
+              .split("\n")
+              .find((line) => line.startsWith("data: "));
+            if (!dataLine) continue;
+
+            const dataStr = dataLine.slice("data: ".length).trim();
+            if (!dataStr || dataStr === "[DONE]") continue;
+
+            try {
+              const parsed = JSON.parse(dataStr) as {
+                type?: string;
+                delta?: { type?: string; text?: string };
+              };
+              if (
+                parsed.type === "content_block_delta" &&
+                parsed.delta?.type === "text_delta" &&
+                typeof parsed.delta.text === "string"
+              ) {
+                controller.enqueue(encoder.encode(parsed.delta.text));
+              }
+            } catch {
+              // malformed event; skip
+            }
           }
         }
         controller.close();
       } catch (err) {
-        const msg =
-          err instanceof Anthropic.APIError
-            ? `Anthropic API error ${err.status}: ${err.message}`
-            : err instanceof Error
-              ? err.message
-              : String(err);
+        const msg = err instanceof Error ? err.message : String(err);
         try {
           controller.enqueue(
             encoder.encode(`\n\n<<<STREAM_ERROR>>>${msg}<<<END>>>`),
           );
         } catch {
-          // controller may already be closed; ignore
+          // controller may already be closed
         }
-        controller.close();
+        try {
+          controller.close();
+        } catch {
+          // already closed
+        }
       }
+    },
+    cancel() {
+      sourceReader.cancel().catch(() => {
+        // ignore cancellation errors
+      });
     },
   });
 

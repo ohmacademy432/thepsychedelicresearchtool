@@ -210,3 +210,23 @@ Local testing: `npx netlify dev` runs Edge Functions in the local Deno runtime; 
 
 After this deploy lands, retry the same Lexapro + Psilocybin question on `psychedelicresearchtool.netlify.app`. Expected: streaming begins within ~10-15s, full answer within ~30-40s (depending on web-search depth). 504s should not recur for normal clinical queries.
 
+---
+
+**April 27, 2026 — Cowork session, late evening: SDK -> direct fetch in the Edge Function.**
+
+First push of the Edge Function migration (commit `e3f6a9e`) failed Netlify's build with: *"Could not resolve `npm:@anthropic-ai/sdk@^0.90.0`"* during edge-function bundling. Netlify Edge Functions cannot bundle Node-only npm modules — esbuild doesn't resolve `npm:` specifiers in their Deno-compatible runtime, even though the syntax is valid Deno. The build aborted before deploy and rolled back to the previous commit (the regular Functions one with the 26s window — same as before, hence April was still seeing 504s).
+
+Fix in this commit: rewrite `netlify/edge-functions/ask.ts` to call the Anthropic Messages API via direct `fetch` to `https://api.anthropic.com/v1/messages` with manual SSE parsing. No npm imports. Trade-off: ~80 extra lines for the SSE parser (split on blank lines, extract `data: ...` JSON, filter for `content_block_delta` events with `text_delta` payloads). Same prompt, same model (`claude-sonnet-4-6`), same tools (`web_search_20260209`, adaptive thinking), same `cache_control: "ephemeral"` on the system prompt — only the transport changed.
+
+Headers used:
+- `x-api-key: <key>` (instead of Authorization Bearer; matches Anthropic's documented auth)
+- `anthropic-version: 2023-06-01`
+- `content-type: application/json`
+
+Error handling:
+- Pre-stream Anthropic errors (4xx/5xx response) → JSON error response with status preserved (502 if Anthropic returned 5xx)
+- Mid-stream errors → existing `<<<STREAM_ERROR>>>...<<<END>>>` marker the front-end already parses
+- Network errors reaching Anthropic → 502 with the underlying error message
+
+The endpoint stays at `/api/ask` (configured via inline `export const config = { path: "/api/ask" }`). Front-end `ASK_ENDPOINT` is unchanged from the previous commit.
+
