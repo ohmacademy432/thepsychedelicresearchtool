@@ -185,10 +185,6 @@ export default async (req: Request): Promise<Response> => {
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
-        // The official @anthropic-ai/sdk sets an `anthropic-beta` header
-        // automatically when web_search is used. Replicate that here so
-        // direct-fetch parity is maintained.
-        "anthropic-beta": "web-search-2026-02-09",
       },
       body: JSON.stringify(anthropicBody),
     });
