@@ -103,7 +103,7 @@ function newId(): string {
   return `q_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
-const ASK_ENDPOINT = "/.netlify/functions/ask";
+const ASK_ENDPOINT = "/api/ask";
 const ERROR_MARKER_START = "<<<STREAM_ERROR>>>";
 const ERROR_MARKER_END = "<<<END>>>";
 

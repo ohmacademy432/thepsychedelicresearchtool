@@ -180,8 +180,33 @@ Anthropic backend verified â direct API tests against `claude-sonnet-4-6` w
 **Other housekeeping in this commit:**
 - `.gitignore` adds `deno.lock` (a dev-tool cache that `netlify dev` writes locally; should not be tracked)
 - Updated **Account map** table (top of this file) to reflect confirmed Netlify identity and Git-connected deploy
-- Locally fixed `.env.local` line endings from CRLF â LF to prevent any future tooling that reads it raw from picking up trailing `` on values. (Not committed â `.env.local` is gitignored.)
+- Locally fixed `.env.local` line endings from CRLF â LF to prevent any future tooling that reads it raw from picking up trailing `
+` on values. (Not committed â `.env.local` is gitignored.)
 
 `MAX_TOKENS` in `ask.ts` left at 8192 â April confirmed the lithium answer rendered fully without truncation. Bump to 16384 is a future option if longer answers ever cut off.
 
 Next: deploy this commit, confirm Netlify Forms notification recipient, smoke-test the live URL end-to-end with a real contact-form submission, then process April's first real access request via the manual onboarding workflow above.
+
+---
+
+**April 27, 2026 — Cowork session, evening: migrated `ask.ts` from Netlify Functions to Netlify Edge Functions.**
+
+After going live earlier in the day, April hit `HTTP 504 Gateway Timeout` on her first complex screening question (Lexapro + Psilocybin candidacy). Root cause: regular Netlify Functions have a 26-second streaming-response window, but adaptive thinking + web search routinely takes 30-50s before the first byte reaches the browser. Edge Functions have a 50s+ streaming window and are designed for AI streaming workloads — the right architecture for this app.
+
+Changes in this commit:
+
+- **New file:** `netlify/edge-functions/ask.ts` — same logic as the deleted `netlify/functions/ask.ts`, with these runtime adjustments:
+  - Imports the Anthropic SDK via Deno-style npm specifier: `import Anthropic from "npm:@anthropic-ai/sdk@^0.90.0"`
+  - Reads the API key via `Netlify.env.get("ANTHROPIC_API_KEY")` (Edge Functions runtime) instead of `process.env.ANTHROPIC_API_KEY`
+  - Declares the `Netlify` global at the top so TypeScript knows about it: `declare const Netlify: { env: { get(key: string): string | undefined } };`
+  - Production-friendly error message if the key is missing (no "set in .env.local" guidance)
+  - Inline `export const config = { path: "/api/ask" };` at the bottom — Netlify reads this at deploy time and routes incoming `/api/ask` requests to this Edge Function
+- **Deleted:** `netlify/functions/ask.ts` (replaced by the Edge Function above)
+- **Updated:** `src/App.tsx` — `ASK_ENDPOINT` constant changed from `/.netlify/functions/ask` to `/api/ask` to match the new Edge Function path
+
+Same prompt, same tools (web_search_20260209, adaptive thinking), same 8192 max tokens. Only the runtime + URL changed.
+
+Local testing: `npx netlify dev` runs Edge Functions in the local Deno runtime; `/api/ask` should be reachable on `:8888` for full-stack local testing. If the SDK has a Deno compatibility issue, the fallback is direct fetch to `https://api.anthropic.com/v1/messages` with manual SSE parsing — but worth trying the SDK first since it handles streaming + tool-use parsing for us.
+
+After this deploy lands, retry the same Lexapro + Psilocybin question on `psychedelicresearchtool.netlify.app`. Expected: streaming begins within ~10-15s, full answer within ~30-40s (depending on web-search depth). 504s should not recur for normal clinical queries.
+

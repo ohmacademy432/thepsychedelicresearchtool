@@ -1,4 +1,10 @@
-import Anthropic from "@anthropic-ai/sdk";
+// Netlify Edge Functions run on Deno. The npm: specifier lets us reuse
+// the same Anthropic SDK without bundling it through Node.
+import Anthropic from "npm:@anthropic-ai/sdk@^0.90.0";
+
+// Netlify provides a global `Netlify.env.get()` for env-var access in
+// Edge Functions (instead of process.env).
+declare const Netlify: { env: { get(key: string): string | undefined } };
 
 // Used by the source recency flagging instructions in the system prompt.
 // Any citation with a publication year at or before OLD_SOURCE_YEAR is flagged
@@ -130,11 +136,11 @@ export default async (req: Request): Promise<Response> => {
     return jsonError(405, "Method not allowed. Use POST.");
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = Netlify.env.get("ANTHROPIC_API_KEY");
   if (!apiKey || apiKey.trim() === "" || apiKey === "paste-your-key-here") {
     return jsonError(
       500,
-      "Server is missing ANTHROPIC_API_KEY. Set it in .env.local (local) or Netlify site env vars (production).",
+      "Server is missing ANTHROPIC_API_KEY. Configure it in Netlify site environment variables.",
     );
   }
 
@@ -208,4 +214,13 @@ export default async (req: Request): Promise<Response> => {
       "x-accel-buffering": "no",
     },
   });
+};
+
+// Netlify Edge Function config — routes incoming requests at /api/ask to
+// this handler. Edge Functions have a 50s+ streaming response window
+// (vs 26s for regular Functions), which is why we migrated screening
+// requests here: adaptive thinking + web search routinely exceeds 26s
+// before the first byte streams back.
+export const config = {
+  path: "/api/ask",
 };
