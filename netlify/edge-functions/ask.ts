@@ -185,6 +185,10 @@ export default async (req: Request): Promise<Response> => {
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
+        // The official @anthropic-ai/sdk sets an `anthropic-beta` header
+        // automatically when web_search is used. Replicate that here so
+        // direct-fetch parity is maintained.
+        "anthropic-beta": "web-search-2026-02-09",
       },
       body: JSON.stringify(anthropicBody),
     });
@@ -219,6 +223,14 @@ export default async (req: Request): Promise<Response> => {
   const readable = new ReadableStream<Uint8Array>({
     async start(controller) {
       const encoder = new TextEncoder();
+      // Send an immediate whitespace byte so the browser registers the
+      // streaming response as "alive" — adaptive thinking + web search
+      // can take 10-30s before Anthropic emits the first text_delta,
+      // and Safari/iOS drops streaming fetches with "Load failed" if
+      // nothing arrives in that window. The markdown renderer trims
+      // leading whitespace, so this is invisible to the user.
+      controller.enqueue(encoder.encode(" "));
+
       try {
         while (true) {
           const { value, done } = await sourceReader.read();
