@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from "react";
-import { useAuth } from "../lib/auth-context";
 
 interface Props {
   onSwitchToLogin: () => void;
@@ -17,15 +16,31 @@ const PROFESSIONAL_ROLES = [
   "Other — describe in credentials",
 ] as const;
 
+// Encode a plain object as application/x-www-form-urlencoded for Netlify Forms.
+function encode(data: Record<string, string>): string {
+  return Object.keys(data)
+    .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(data[k])}`)
+    .join("&");
+}
+
+/**
+ * Access-request form. Submits to Netlify Forms (a hidden static form in
+ * index.html declares the schema for build-time detection). On success,
+ * Netlify emails ohmacademy432@gmail.com with subject
+ * "The Psychedelic Tool Approval".
+ *
+ * Despite the file name, this no longer creates a Supabase auth account
+ * directly. The Psychedelic Nurse manually creates accounts in Supabase
+ * after reviewing each request and emails credentials to the requester.
+ */
 export function SignupScreen({ onSwitchToLogin }: Props) {
-  const { signUp } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("");
   const [credentials, setCredentials] = useState("");
   const [organization, setOrganization] = useState("");
   const [requestNote, setRequestNote] = useState("");
+  const [botField, setBotField] = useState(""); // honeypot â should stay empty
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -33,35 +48,48 @@ export function SignupScreen({ onSwitchToLogin }: Props) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!fullName.trim() || !role.trim() || !email.trim()) {
+      setError("Email, name, and professional role are required.");
+      return;
+    }
+
     setSubmitting(true);
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({
+          "form-name": "contact",
+          "bot-field": botField,
+          subject: "The Psychedelic Tool Approval",
+          email: email.trim(),
+          full_name: fullName.trim(),
+          professional_role: role.trim(),
+          credentials: credentials.trim(),
+          organization: organization.trim(),
+          access_request_note: requestNote.trim(),
+        }),
+      });
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      if (!response.ok) {
+        setError(
+          `Submission failed (HTTP ${response.status}). Please try again, or contact The Psychedelic Nurse directly.`,
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      setSuccess(true);
       setSubmitting(false);
-      return;
-    }
-    if (!fullName.trim() || !role.trim()) {
-      setError("Name and professional role are required.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? `Network error: ${err.message}. Please try again.`
+          : "Network error. Please try again.",
+      );
       setSubmitting(false);
-      return;
     }
-
-    const result = await signUp({
-      email: email.trim(),
-      password,
-      full_name: fullName,
-      professional_role: role,
-      credentials,
-      organization,
-      access_request_note: requestNote,
-    });
-
-    setSubmitting(false);
-    if (!result.ok) {
-      setError(result.error);
-      return;
-    }
-    setSuccess(true);
   }
 
   if (success) {
@@ -72,13 +100,14 @@ export function SignupScreen({ onSwitchToLogin }: Props) {
             Request received
           </h2>
           <p className="mt-3 text-charcoal-soft">
-            Thank you for requesting access to The Psychedelic Nurse —
-            Clinical Research Companion. Your signup has been recorded and
-            is now pending review.
+            Thank you for your interest in The Psychedelic Nurse —
+            Clinical Research Companion. Your access request has been sent
+            and will be reviewed individually.
           </p>
           <p className="mt-3 text-charcoal-soft">
-            You'll be notified when your account is approved. In the meantime,
-            you can close this tab — or sign in once you receive confirmation.
+            The Psychedelic Nurse will email you directly once your account
+            is set up. Access is intended for licensed facilitators and
+            clinicians; please allow time for credentials verification.
           </p>
           <button
             type="button"
@@ -100,10 +129,24 @@ export function SignupScreen({ onSwitchToLogin }: Props) {
       <p className="mt-2 text-sm text-charcoal-soft">
         The Psychedelic Nurse — Clinical Research Companion is available to
         licensed facilitators, clinicians, nurses, therapists, and physicians
-        working with plant medicines. Each request is reviewed individually.
+        working with plant medicines. Each request is reviewed individually,
+        and account credentials are issued by The Psychedelic Nurse via email
+        after review.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        {/* Honeypot — real users won't see/fill this; bots will. */}
+        <p hidden>
+          <label>
+            Don't fill this out:{" "}
+            <input
+              name="bot-field"
+              value={botField}
+              onChange={(e) => setBotField(e.target.value)}
+            />
+          </label>
+        </p>
+
         <Field label="Email" required>
           <input
             type="email"
@@ -111,22 +154,6 @@ export function SignupScreen({ onSwitchToLogin }: Props) {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input"
-          />
-        </Field>
-
-        <Field
-          label="Password"
-          required
-          hint="At least 8 characters. This is used only for signing in."
-        >
-          <input
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             className="input"
           />
         </Field>

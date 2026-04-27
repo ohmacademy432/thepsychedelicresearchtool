@@ -32,6 +32,7 @@ Thumbs.db
 
 # Netlify local
 .netlify
+deno.lock
 
 # Claude Code local config (keep project-shared .claude/ but ignore local overrides)
 .claude/settings.local.json

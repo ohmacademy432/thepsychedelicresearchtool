@@ -27,7 +27,12 @@ interface AuthContextValue {
   profile: Profile | null;
   loading: boolean;
   profileLoading: boolean;
-  signUp: (input: SignupInput) => Promise<{ ok: true } | { ok: false; error: string }>;
+  signUp: (
+    input: SignupInput,
+  ) => Promise<
+    | { ok: true; emailConfirmationRequired: boolean }
+    | { ok: false; error: string }
+  >;
   signIn: (
     email: string,
     password: string,
@@ -127,49 +132,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = useCallback(
     async (
       input: SignupInput,
-    ): Promise<{ ok: true } | { ok: false; error: string }> => {
+    ): Promise<
+      | { ok: true; emailConfirmationRequired: boolean }
+      | { ok: false; error: string }
+    > => {
       if (!supabaseConfigured) {
         return { ok: false, error: "Supabase is not configured." };
       }
 
+      // Pass profile fields via options.data so the database trigger
+      // (`on_auth_user_created` -> `handle_new_user`) can create the
+      // profiles row server-side using service_role. This works whether
+      // or not Supabase is configured to require email confirmation,
+      // because the trigger fires on auth.users INSERT regardless of
+      // session/JWT state.
       const { data, error } = await supabase.auth.signUp({
         email: input.email,
         password: input.password,
+        options: {
+          data: {
+            full_name: input.full_name.trim(),
+            professional_role: input.professional_role.trim(),
+            credentials: input.credentials.trim(),
+            organization: input.organization.trim(),
+            access_request_note: input.access_request_note.trim(),
+          },
+        },
       });
 
       if (error) {
         return { ok: false, error: error.message };
       }
 
-      const userId = data.user?.id;
-      if (!userId) {
+      if (!data.user?.id) {
         return {
           ok: false,
-          error:
-            "Signup succeeded but no user was returned. Check your Supabase email confirmation settings.",
+          error: "Signup did not return a user. Please try again.",
         };
       }
 
-      // Create the associated profile row. RLS allows this because
-      // auth.uid() === profiles.id.
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: userId,
-        full_name: input.full_name.trim(),
-        professional_role: input.professional_role.trim(),
-        credentials: input.credentials.trim() || null,
-        organization: input.organization.trim() || null,
-        access_request_note: input.access_request_note.trim() || null,
-        approved: false,
-      });
+      // When Supabase is configured to require email confirmation, signUp
+      // does NOT return a session — the user must verify their email and
+      // then sign in. When email confirmation is OFF, signUp DOES return
+      // a session and the user is signed in immediately. The UI uses this
+      // flag to show the right success message.
+      const emailConfirmationRequired = !data.session;
 
-      if (profileError) {
-        return {
-          ok: false,
-          error: `Account created but profile save failed: ${profileError.message}. Contact support.`,
-        };
-      }
-
-      return { ok: true };
+      return { ok: true, emailConfirmationRequired };
     },
     [],
   );

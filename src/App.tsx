@@ -66,12 +66,19 @@ function ConfigErrorScreen() {
     <PageShell>
       <div className="rounded-md border border-risk-red-text/30 bg-risk-red-bg p-6">
         <h2 className="font-serif text-lg font-semibold text-risk-red-text">
-          Supabase is not configured
+          Site configuration error
         </h2>
         <p className="mt-2 text-charcoal-soft">
-          The authentication layer needs <code>VITE_SUPABASE_URL</code> and{" "}
-          <code>VITE_SUPABASE_ANON_KEY</code> set in <code>.env.local</code>{" "}
-          at the project root. Add them and restart the dev server.
+          The authentication layer is not configured. Please contact{" "}
+          <a
+            href="https://www.thepsychedelicnurse.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            thepsychedelicnurse.org
+          </a>{" "}
+          for assistance.
         </p>
       </div>
     </PageShell>

@@ -74,7 +74,7 @@ Environment variables**. Never commit the key to git.
 ## Data
 
 The seed file [`src/data/seed-data.json`](src/data/seed-data.json) contains
-a hand-curated reference (GITA, MAPS, Conclave Best Practices, and
+a hand-curated reference (GITA, MAPS, and
 historical OHM protocols authored by The Psychedelic Nurse prior to
 rebrand). It is retained for reference and for any future offline or
 fallback lookup, but the live chat UI does not query it directly — it

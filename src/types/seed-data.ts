@@ -66,9 +66,9 @@ export interface Interaction {
    * Defensibility marker for the cited source.
    *   1 = peer-reviewed clinical literature, published trial protocols,
    *       official guidelines (PubMed, MAPS, GITA, Usona, COMPASS)
-   *   2 = practitioner consensus publications (Tripsit, Conclave Best
-   *       Practices, EntheoNation, Fireside Project, MAPS integration
-   *       workbooks, MSKCC About Herbs)
+   *   2 = practitioner consensus publications and academic medical
+   *       center clinical resources (Tripsit combo chart, MAPS
+   *       integration workbooks, MSKCC About Herbs)
    *   3 = Curator internal protocols / The Psychedelic Nurse judgment (historical OHM protocols retained as-is for provenance)
    * Optional. Existing entries default to undefined and remain valid.
    */

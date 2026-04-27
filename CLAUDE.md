@@ -18,13 +18,14 @@ Before any operation that writes to GitHub, Netlify, Supabase, or similar extern
 
 ---
 
-## Account map (confirmed April 21, 2026)
+## Account map (confirmed April 27, 2026)
 
 | Service | Account / identifier | How it was verified |
 |---|---|---|
-| GitHub | `ohmacademy432` (repo renamed to: `thepsychedelicresearchtool`) | Confirm with `git remote -v` — update remote URL to new repo name via `git remote set-url origin <new-url>` |
-| Netlify | **Confirm in Netlify dashboard** — no local state file linking the CLI | Netlify auto-deploys from GitHub `main`; the site is configured in the Netlify dashboard, not via `netlify link`. April should fill in the account name here when confirmed. |
-| Anthropic API | Key in `.env.local` (local dev) and Netlify site env vars (production) as `ANTHROPIC_API_KEY` | Referenced in `netlify/functions/ask.ts` |
+| GitHub | `ohmacademy432` (repo: `thepsychedelicresearchtool`) | `git remote -v` shows `https://github.com/ohmacademy432/thepsychedelicresearchtool.git` |
+| Netlify | Site `psychedelicresearchtool.netlify.app` — Netlify account authenticated via **GitHub OAuth (ohmacademy432)**, NOT via Google. Git-connected: pushes to `main` auto-deploy. | Confirmed April 27, 2026: April set up the site by signing in to Netlify with GitHub and importing `thepsychedelicresearchtool`. Production env vars (`ANTHROPIC_API_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) set in Site configuration → Environment variables. |
+| Anthropic API | Key in `.env.local` (local dev) and Netlify site env vars (production) as `ANTHROPIC_API_KEY`. **Direct connection** — `ask.ts` uses `@anthropic-ai/sdk` and reads the key from env. NO Netlify AI Gateway, NO proxy. Token usage bills the Anthropic account that owns the key. | Referenced in `netlify/functions/ask.ts`; verified April 27, 2026 by inspecting imports and confirming `@netlify/ai` is only a transitive devDep of `netlify-cli`, not bundled into production. |
+| Supabase | Project URL + anon key in env vars; `profiles` table with admin approval gate (RLS allows users SELECT/INSERT their own row; UPDATE only via service_role from dashboard). | See April 22, 2026 session note below. |
 
 If any of those change, update this file.
 
@@ -133,3 +134,54 @@ Approval workflow:
 Not yet deployed. Local testing workflow: `npm install` to pick up new deps, then `npx netlify dev`.
 
 Next planned work: link up a working AI backend (Anthropic once the account_tier issue is resolved, or migrate to OpenAI if needed). Local folder still named `ohmacademytool` (cosmetic; rename in a future session).
+
+---
+
+**April 27, 2026 â Cowork session: full go-live preparation.**
+
+Anthropic backend verified â direct API tests against `claude-sonnet-4-6` with `web_search_20260209` and adaptive thinking all returned cleanly. Local end-to-end test with `npx netlify dev` produced a high-quality lithium+ibogaine answer with peer-reviewed sources, working â  over-10-years recency flags, and no refusal. All the prompt-engineering work from April 21-22 holds up.
+
+**Netlify deploy setup:**
+- Netlify identity: GitHub OAuth as `ohmacademy432` (NOT Google)
+- Site: `psychedelicresearchtool.netlify.app`
+- Production env vars set in Netlify dashboard: `ANTHROPIC_API_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (values copied from local `.env.local`)
+- Auto-deploy on push to `main` is wired
+- Confirmed `@netlify/ai` is only a transitive devDep of `netlify-cli` and not bundled into production. Production AI calls go directly from the function to Anthropic with April's key â the previous "Netlify burned tokens" pattern from an earlier setup is not present in this codebase.
+
+**Pre-launch hardening in this commit:**
+- `README.md` â removed "Conclave Best Practices" from the data-section sources line (consistency with system prompt's forbidden-source list per the April 22 cleanup)
+- `src/types/seed-data.ts` â stale type doc-comment cleaned up to remove Conclave/EntheoNation/Fireside Project from the sourceTier=2 list
+- `src/App.tsx` â `ConfigErrorScreen` rewritten with production-friendly copy linking to thepsychedelicnurse.org (was "set values in .env.local and restart the dev server")
+- `src/lib/auth-context.tsx` â `signUp()` now passes profile fields via `options.data` (consumed by the database trigger below) and reports back whether email confirmation is required. Manual profile insert removed. **Currently unused by the UI** per the contact-form pivot below; kept correct in case self-signup is ever re-enabled.
+
+**Architectural pivot: signup â contact form.** After hitting Supabase email-delivery flakiness during local testing (verification emails not arriving even on first signup, even with the email-confirmation toggle on), April pivoted the access flow to a contact form. The new model:
+- **Old flow:** user submits signup form â creates Supabase auth.users + profiles row â email confirmation â admin approval â access
+- **New flow:** user submits contact form â submission emailed to `ohmacademy432@gmail.com` via **Netlify Forms** with subject `The Psychedelic Tool Approval` â April manually creates the auth account in Supabase and emails the user their credentials â user logs in via the existing LoginScreen, lands on PendingApprovalScreen, April flips `approved=true` to grant access
+- `src/components/SignupScreen.tsx` replaced entirely. No longer calls `signUp()`. POSTs form-encoded body to `/` with `form-name=contact`. Honeypot field included. Subject baked in.
+- `index.html` gets a hidden `<form name="contact" data-netlify="true">` so Netlify's build-time form detector picks it up. Field names match the React form. Hidden `subject` field forces every notification email to arrive with `The Psychedelic Tool Approval` as its subject â April will set up a Gmail priority filter on this exact subject so requests don't sit unread for days.
+
+**Supabase database state (already in place, persists across this deploy):**
+- `profiles` table with admin approval gate (RLS allows users SELECT/INSERT their own row; UPDATE only via service_role from dashboard)
+- `handle_new_user()` Postgres function + `on_auth_user_created` trigger on `auth.users`. Trigger creates a profiles row from `raw_user_meta_data` whenever a new auth user is inserted. Currently unused by the UI (since signUp is no longer called from the contact form), but harmless. Will still fire when April creates a user via Supabase dashboard "Add new user" â produces a minimal profiles row with empty metadata fields; she then edits the row to populate full_name etc. before flipping `approved=true`.
+- Email confirmation toggle in Authentication â Providers â Email: **not load-bearing for the new flow.** Can be left in either state; recommend OFF since users won't hit the self-signup path that triggers verification emails.
+
+**Manual onboarding workflow (going forward):**
+1. Prospective facilitator visits the site â "Request access" â submits the contact form
+2. April receives email at `ohmacademy432@gmail.com` with subject `The Psychedelic Tool Approval` containing all submitted fields
+3. April reviews credentials. If approved:
+   a. Supabase dashboard â Authentication â Users â "Add new user" â enter their email + a temporary password
+   b. The `on_auth_user_created` trigger creates a minimal profiles row
+   c. April edits that profiles row in Table Editor to populate `full_name`, `professional_role`, `credentials`, `organization`, `access_request_note` from the email she received, then sets `approved=true`
+   d. April emails the user with their email + temporary password and the login URL (`psychedelicresearchtool.netlify.app`)
+4. User logs in via LoginScreen â lands directly on the ResearchTool (skipping PendingApprovalScreen since `approved=true` is already set)
+
+**One Netlify dashboard step required after first deploy:** Site dashboard â Forms â Form notifications â confirm `ohmacademy432@gmail.com` is listed as a recipient for the `contact` form. Netlify usually auto-uses the account email; verify it points where intended. Free tier covers 100 form submissions/month, far above expected volume.
+
+**Other housekeeping in this commit:**
+- `.gitignore` adds `deno.lock` (a dev-tool cache that `netlify dev` writes locally; should not be tracked)
+- Updated **Account map** table (top of this file) to reflect confirmed Netlify identity and Git-connected deploy
+- Locally fixed `.env.local` line endings from CRLF â LF to prevent any future tooling that reads it raw from picking up trailing `` on values. (Not committed â `.env.local` is gitignored.)
+
+`MAX_TOKENS` in `ask.ts` left at 8192 â April confirmed the lithium answer rendered fully without truncation. Bump to 16384 is a future option if longer answers ever cut off.
+
+Next: deploy this commit, confirm Netlify Forms notification recipient, smoke-test the live URL end-to-end with a real contact-form submission, then process April's first real access request via the manual onboarding workflow above.

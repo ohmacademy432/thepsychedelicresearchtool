@@ -8,6 +8,25 @@
     <title>The Psychedelic Nurse — Clinical Research Companion</title>
   </head>
   <body>
+    <!--
+      Netlify Forms detection (build-time only).
+      This hidden static form is parsed by Netlify's build pipeline so it
+      knows to accept POSTs to "/" with form-name=contact. Field names
+      below MUST match the React form in src/components/SignupScreen.tsx.
+      The "subject" hidden field becomes the email subject line.
+      The honeypot field "bot-field" silently drops bot submissions.
+    -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="hidden" name="bot-field" />
+      <input type="hidden" name="subject" value="The Psychedelic Tool Approval" />
+      <input type="email" name="email" />
+      <input type="text" name="full_name" />
+      <input type="text" name="professional_role" />
+      <input type="text" name="credentials" />
+      <input type="text" name="organization" />
+      <textarea name="access_request_note"></textarea>
+    </form>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
