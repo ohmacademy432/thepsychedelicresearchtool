@@ -170,7 +170,12 @@ export default async (req: Request): Promise<Response> => {
         cache_control: { type: "ephemeral" },
       },
     ],
-    thinking: { type: "adaptive" },
+    // Adaptive thinking removed (April 27, 2026): on Netlify Edge Functions
+    // the 5-15s thinking phase pushed time-to-first-byte beyond what the
+    // browser was willing to hold the streaming connection open for ("Load
+    // failed" on iOS Safari, "Network error" on other browsers). The
+    // structured system prompt above provides enough scaffolding that the
+    // answer quality stays high without explicit thinking.
     tools: [{ type: "web_search_20260209", name: "web_search" }],
     messages: [
       { role: "user", content: `${USER_MESSAGE_PREFIX}${question}` },
